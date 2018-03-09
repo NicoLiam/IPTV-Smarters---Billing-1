@@ -156,8 +156,14 @@ public class ParentalControlFragment extends Fragment {
     }
 
     private void setInvoicesTab() {
-        tabLayoutInvoices.addTab(tabLayoutInvoices.newTab().setText("CATEGORIES"));
-        tabLayoutInvoices.addTab(tabLayoutInvoices.newTab().setText("SETTINGS"));
+//        tabLayoutInvoices.addTab(tabLayoutInvoices.newTab().setText("CATEGORIES"));
+//        tabLayoutInvoices.addTab(tabLayoutInvoices.newTab().setText("SETTINGS"));
+
+        tabLayoutInvoices.addTab(tabLayoutInvoices.newTab().setText(getResources().getString(R.string.live_categories)));
+        tabLayoutInvoices.addTab(tabLayoutInvoices.newTab().setText(getResources().getString(R.string.vod_categories)));
+        tabLayoutInvoices.addTab(tabLayoutInvoices.newTab().setText(getResources().getString(R.string.settings)));
+
+
         tabLayoutInvoices.setTabGravity(TabLayout.GRAVITY_FILL);
         final ParentalControlPagerAdapter adapter = new ParentalControlPagerAdapter(getChildFragmentManager(), tabLayoutInvoices.getTabCount(), //myContext.getSupportFragmentManager()
                 getContext(), tabInvoicesTotalCount);
@@ -185,12 +191,13 @@ public class ParentalControlFragment extends Fragment {
                 View view = tab.getCustomView();
                 switch (postion) {
                     case 0:
-//                        tabLayoutInvoices.setSelectedTabIndicatorColor(Color.parseColor("#0cdc78"));
-                        adapter.selectPaidTabView(view, fontOPenSansBold, postion);
+                        adapter.selectLiveCatTabView(view, fontOPenSansBold, postion);
                         break;
                     case 1:
-//                        tabLayoutInvoices.setSelectedTabIndicatorColor(Color.parseColor("#ff6f43"));
-                        adapter.selectUnpaidTabView(view, fontOPenSansBold);
+                        adapter.selectVODCatTabView(view, fontOPenSansBold, postion);
+                        break;
+                    case 2:
+                        adapter.selectSettingsTabView(view, fontOPenSansBold);
                         break;
                 }
             }
@@ -202,10 +209,13 @@ public class ParentalControlFragment extends Fragment {
                 View view = tab.getCustomView();
                 switch (postion) {
                     case 0:
-                        adapter.unselectPaidTabView(view, fontOPenSansRegular);
+                        adapter.unSelectLiveCatTabView(view, fontOPenSansRegular);
                         break;
                     case 1:
-                        adapter.unselectUnpaidTabView(view, fontOPenSansRegular);
+                        adapter.unSelectLiveCatTabView(view, fontOPenSansRegular);
+                        break;
+                    case 2:
+                        adapter.unSelectSettingsTabView(view, fontOPenSansRegular);
                         break;
                 }
             }

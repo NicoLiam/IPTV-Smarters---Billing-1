@@ -466,7 +466,7 @@ public class LoginIPTVFragment extends Fragment implements LoginIPTVInterface {
         if(context!=null) {
             loginPrefXtream = context.getSharedPreferences(AppConst.LOGIN_SHARED_PREFERENCE_IS_XTREAM_1_06, MODE_PRIVATE);
             loginPrefXtreamEditor = loginPrefXtream.edit();
-            loginPrefXtreamEditor.putBoolean(AppConst.IS_XTREAM_1_06, true);
+            loginPrefXtreamEditor.putBoolean(AppConst.IS_XTREAM_1_06, false);
             loginPrefXtreamEditor.commit();
         }
 

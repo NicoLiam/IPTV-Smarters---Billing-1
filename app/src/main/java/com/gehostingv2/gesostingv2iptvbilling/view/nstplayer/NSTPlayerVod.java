@@ -1,5 +1,6 @@
 package com.gehostingv2.gesostingv2iptvbilling.view.nstplayer;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -193,6 +194,16 @@ public class NSTPlayerVod {
         }
     }
 
+    @SuppressLint("InlinedApi")
+    public void hideSystemUi() {
+        videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
 
     /**
      * @param timeout
@@ -211,8 +222,10 @@ public class NSTPlayerVod {
 
             ListView channelListView = (ListView) activity.findViewById(R.id.lv_ch);
             EditText searchEditText  = (EditText) activity.findViewById(R.id.et_search);
+            LinearLayout  ll_categories_view  = (LinearLayout) activity.findViewById(R.id.ll_categories_view);
             channelListView.setVisibility(View.VISIBLE);
             searchEditText.setVisibility(View.VISIBLE);
+            ll_categories_view.setVisibility(View.VISIBLE);
             channelListView.setFocusable(true);
             channelListView.requestFocus();
 
@@ -379,6 +392,8 @@ public class NSTPlayerVod {
         View liveBox = activity.findViewById(R.id.app_video_box);
         final ListView channelListView = (ListView) activity.findViewById(R.id.lv_ch);
         final EditText searchEditText  = (EditText) activity.findViewById(R.id.et_search);
+        final LinearLayout  ll_categories_view  = (LinearLayout) activity.findViewById(R.id.ll_categories_view);
+
 
         liveBox.setClickable(true);
         liveBox.setOnTouchListener(new View.OnTouchListener() {
@@ -387,20 +402,22 @@ public class NSTPlayerVod {
                 if(channelListView.getVisibility()==View.VISIBLE){
                     channelListView.setVisibility(View.GONE);
                     searchEditText.setVisibility(View.GONE);
+                    ll_categories_view.setVisibility(View.GONE);
                     isShowing = true;
                     return true;
                 }
 
-                if (gestureDetector.onTouchEvent(motionEvent))
-                    return true;
+                if(motionEvent!=null) {
+                    if (gestureDetector.onTouchEvent(motionEvent))
+                        return true;
 
 
-
-                // 处理手势结束
-                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-                    case MotionEvent.ACTION_UP:
-                        endGesture();
-                        break;
+                    // 处理手势结束
+                    switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+                        case MotionEvent.ACTION_UP:
+                            endGesture();
+                            break;
+                    }
                 }
 
                 return false;
@@ -474,10 +491,12 @@ public class NSTPlayerVod {
         } else if (newStatus == STATUS_PLAYING) {
             $.id(R.id.exo_play).gone();
             $.id(R.id.exo_pause).visible();
+//            show(defaultTimeout);
             hideAll();
         }else if (newStatus == STATUS_PAUSE) {
             $.id(R.id.exo_play).visible();
             $.id(R.id.exo_pause).gone();
+            show(defaultTimeout);
 //            hideAll();
         }
 
@@ -998,28 +1017,30 @@ public class NSTPlayerVod {
          */
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            float mOldX = e1.getX(), mOldY = e1.getY();
-            float deltaY = mOldY - e2.getY();
-            float deltaX = mOldX - e2.getX();
-            if (firstTouch) {
-                toSeek = Math.abs(distanceX) >= Math.abs(distanceY);
-                volumeControl=mOldX > screenWidthPixels * 0.5f;
-                firstTouch = false;
-            }
-
-            if (toSeek) {
-                if (!isLive) {
-                    onProgressSlide(-deltaX / videoView.getWidth());
+            if(e1!=null && e2!=null) {
+                float mOldX = e1.getX(), mOldY = e1.getY();
+                float deltaY = mOldY - e2.getY();
+                float deltaX = mOldX - e2.getX();
+                if (firstTouch) {
+                    toSeek = Math.abs(distanceX) >= Math.abs(distanceY);
+                    volumeControl = mOldX > screenWidthPixels * 0.5f;
+                    firstTouch = false;
                 }
-            } else {
-                float percent = deltaY / videoView.getHeight();
-                if (volumeControl) {
-                    onVolumeSlide(percent);
+
+                if (toSeek) {
+                    if (!isLive) {
+                        onProgressSlide(-deltaX / videoView.getWidth());
+                    }
                 } else {
-                    onBrightnessSlide(percent);
+                    float percent = deltaY / videoView.getHeight();
+                    if (volumeControl) {
+                        onVolumeSlide(percent);
+                    } else {
+                        onBrightnessSlide(percent);
+                    }
+
+
                 }
-
-
             }
 
             return super.onScroll(e1, e2, distanceX, distanceY);
@@ -1032,6 +1053,8 @@ public class NSTPlayerVod {
             } else {
                 ListView channelListView = (ListView) activity.findViewById(R.id.lv_ch);
                 EditText searchEditText  = (EditText) activity.findViewById(R.id.et_search);
+                LinearLayout ll_categories_view = (LinearLayout) activity.findViewById(R.id.ll_categories_view);
+
                 LinearLayout topBoxLinearLayout  = (LinearLayout) activity.findViewById(R.id.app_video_top_box);
                 LinearLayout controlsLinearLayout  = (LinearLayout) activity.findViewById(R.id.controls);
                 RelativeLayout bottomBoxRelativeLayout = (RelativeLayout) activity.findViewById(R.id.app_video_bottom_box);
@@ -1040,6 +1063,7 @@ public class NSTPlayerVod {
                 if(channelListView.getVisibility()==View.VISIBLE){
                     channelListView.setVisibility(View.GONE);
                     searchEditText.setVisibility(View.GONE);
+                    ll_categories_view.setVisibility(View.GONE);
                     return true;
                 }else if(topBoxLinearLayout.getVisibility() == View.VISIBLE){
                     topBoxLinearLayout.setVisibility(View.GONE);
@@ -1186,5 +1210,4 @@ public class NSTPlayerVod {
         this.onControlPanelVisibilityChangeListener = listener;
         return this;
     }
-
 }

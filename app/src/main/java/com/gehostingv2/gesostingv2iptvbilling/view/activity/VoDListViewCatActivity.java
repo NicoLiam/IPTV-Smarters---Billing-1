@@ -70,6 +70,7 @@ import com.gehostingv2.gesostingv2iptvbilling.model.database.FavouriteDBModel;
 import com.gehostingv2.gesostingv2iptvbilling.model.database.LiveStreamCategoryIdDBModel;
 import com.gehostingv2.gesostingv2iptvbilling.model.database.LiveStreamDBHandler;
 import com.gehostingv2.gesostingv2iptvbilling.model.database.LiveStreamsDBModel;
+import com.gehostingv2.gesostingv2iptvbilling.model.database.PasswordStatusDBModel;
 import com.gehostingv2.gesostingv2iptvbilling.presenter.ClientDetailPresenter;
 import com.gehostingv2.gesostingv2iptvbilling.presenter.VodPresenter;
 import com.gehostingv2.gesostingv2iptvbilling.view.adapter.ExpandndableListAdapter;
@@ -232,6 +233,12 @@ public class VoDListViewCatActivity extends AppCompatActivity implements VodInte
     GridLayoutManager gridLayoutManager;
 
     private VodSubCatAdpaterNew vodSubCatAdpaterNew;
+
+    private ArrayList<String> listPassword = new ArrayList<>();
+    private ArrayList<PasswordStatusDBModel> categoryWithPasword;
+    private ArrayList<LiveStreamsDBModel> liveListDetailUnlcked;
+    private ArrayList<LiveStreamsDBModel> liveListDetailUnlckedDetail;
+    private ArrayList<LiveStreamsDBModel> liveListDetailAvailable;
 
 
     @Override
@@ -434,7 +441,41 @@ public class VoDListViewCatActivity extends AppCompatActivity implements VodInte
             LiveStreamDBHandler liveStreamDBHandler = new LiveStreamDBHandler(context);
             if (getActiveLiveStreamCategoryId.equals("-1")) {
 
-            } else {
+            }
+
+            else if (getActiveLiveStreamCategoryId.equals("0")) {
+                categoryWithPasword = new ArrayList<PasswordStatusDBModel>();
+                liveListDetailUnlcked = new ArrayList<LiveStreamsDBModel>();
+                liveListDetailUnlckedDetail = new ArrayList<LiveStreamsDBModel>();
+                liveListDetailAvailable = new ArrayList<LiveStreamsDBModel>();
+                ArrayList<LiveStreamsDBModel> channelAvailable = liveStreamDBHandler.getAllLiveStreasWithCategoryId(getActiveLiveStreamCategoryId, "movie");
+                int parentalStatusCount = liveStreamDBHandler.getParentalStatusCount();
+                if (parentalStatusCount > 0 && channelAvailable != null) {
+                    listPassword = getPasswordSetCategories();
+                    if (listPassword != null) {
+                        liveListDetailUnlckedDetail = getUnlockedCategories(channelAvailable,
+                                listPassword);
+                    }
+                    liveListDetailAvailable = liveListDetailUnlckedDetail;
+                } else {
+                    liveListDetailAvailable = channelAvailable;
+                }
+                onFinish();
+                if (progressDialog != null)
+                    progressDialog.dismiss();
+                if (liveListDetailAvailable != null && myRecyclerView != null && liveListDetailAvailable.size() != 0) {
+                    vodAdapter = new VodAdapter(liveListDetailAvailable, context);
+                    myRecyclerView.setAdapter(vodAdapter);
+                } else {
+
+                    if (tvNoStream != null) {
+                        tvNoStream.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+
+            else {
                 ArrayList<LiveStreamsDBModel> channelAvailable = liveStreamDBHandler.getAllLiveStreasWithCategoryId(getActiveLiveStreamCategoryId, "movie");
                 onFinish();
                 if (progressDialog != null)
@@ -455,6 +496,40 @@ public class VoDListViewCatActivity extends AppCompatActivity implements VodInte
 
         if (progressDialog != null)
             progressDialog.dismiss();
+    }
+
+
+
+    private ArrayList<LiveStreamsDBModel> getUnlockedCategories(ArrayList<LiveStreamsDBModel> liveListDetail,
+
+                                                                ArrayList<String> listPassword) {
+        for (LiveStreamsDBModel user1 : liveListDetail) {
+            boolean flag = false;
+            for (String user2 : listPassword) {
+                if (user1.getCategoryId().equals(user2)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag == false) {
+                liveListDetailUnlcked.add(user1);
+            }
+        }
+        return liveListDetailUnlcked;
+    }
+
+    private ArrayList<String> getPasswordSetCategories() {
+        categoryWithPasword =
+                liveStreamDBHandler.getAllPasswordStatus();
+        if (categoryWithPasword != null) {
+            for (PasswordStatusDBModel listItemLocked : categoryWithPasword) {
+                if (listItemLocked.getPasswordStatus().equals(AppConst.PASSWORD_SET)) {
+                    listPassword.add(listItemLocked.getPasswordStatusCategoryId());
+                }
+            }
+        }
+        return listPassword;
+
     }
 
 
@@ -607,112 +682,9 @@ public class VoDListViewCatActivity extends AppCompatActivity implements VodInte
             getSupportFragmentManager().popBackStack(name, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
         FragmentTransaction ft = fragmentManager.beginTransaction();
-
         Utils.startActivityOtherDash(context,selectedItem);
-
-//        if (selectedItem.equals(getResources().getString(R.string.drawer_home))) {
-//            Intent dashboardActivtyIntent = new Intent(this, DashboardActivity.class);
-//            startActivity(dashboardActivtyIntent);
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_services_my_services))) {
-//            SharedPreferences prefServices = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//            clientId = prefServices.getInt(AppConst.CLIENT_ID, -1);
-//            if (clientId == -1 || clientId == 0) {
-//                Intent intentLogin = new Intent(this, LoginWHMCSActivity.class);
-//                intentLogin.putExtra(AppConst.ACTIVITY_SERVICES, AppConst.ACTIVITY_SERVICES);
-//                startActivity(intentLogin);
-//            } else {
-//                Intent servicesIntent = new Intent(this, ServicesActivity.class);
-//                startActivity(servicesIntent);
-//            }
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_billing_my_invoices))) {
-//            SharedPreferences prefInvoice = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//            clientId = prefInvoice.getInt(AppConst.CLIENT_ID, -1);
-//            if (clientId == -1 || clientId == 0) {
-//                Intent intentLogin = new Intent(this, LoginWHMCSActivity.class);
-//                intentLogin.putExtra(AppConst.ACTIVITY_INVOICES, AppConst.ACTIVITY_INVOICES);
-//                startActivity(intentLogin);
-//            } else {
-//                Intent invoiceActivityIntent = new Intent(this, InvoicesActivity.class);
-//                startActivity(invoiceActivityIntent);
-//            }
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_services_order_new_services))) {
-//            SharedPreferences prefOrderNewServices = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//            clientId = prefOrderNewServices.getInt(AppConst.CLIENT_ID, -1);
-//            if (clientId == -1 || clientId == 0) {
-//                Intent intentLogin = new Intent(this, LoginWHMCSActivity.class);
-//                intentLogin.putExtra(AppConst.ACTIVITY_INVOICES, AppConst.ACTIVITY_INVOICES);
-//                startActivity(intentLogin);
-//            } else {
-//                Intent invoiceActivityIntent = new Intent(this, OrderNewServicesActivtiy.class);
-//                startActivity(invoiceActivityIntent);
-//            }
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_support_ticket))) {
-//            SharedPreferences prefTicket = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//            clientId = prefTicket.getInt(AppConst.CLIENT_ID, -1);
-//            if (clientId == -1 || clientId == 0) {
-//                Intent intentLogin = new Intent(this, LoginWHMCSActivity.class);
-//                intentLogin.putExtra(AppConst.ACTIVITY_TICKETS, AppConst.ACTIVITY_TICKETS);
-//                startActivity(intentLogin);
-//            } else {
-//                Intent ticketsActivityIntent = new Intent(this, TicketsActivity.class);
-//                startActivity(ticketsActivityIntent);
-//            }
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_support_open_ticket))) {
-//            SharedPreferences prefOpenTicket = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//            clientId = prefOpenTicket.getInt(AppConst.CLIENT_ID, -1);
-//            if (clientId == -1 || clientId == 0) {
-//                Intent intentLogin = new Intent(this, LoginWHMCSActivity.class);
-//                intentLogin.putExtra(AppConst.ACTIVITY_OPEN_TICKETS, AppConst.ACTIVITY_OPEN_TICKETS);
-//                startActivity(intentLogin);
-//            } else {
-//                Intent openTicketIntent = new Intent(this, OpenTicketActivity.class);
-//                startActivity(openTicketIntent);
-//            }
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_live_tv))) {
-//            Intent liveStreamActivity = new Intent(this, LiveTVTabViewActivity.class);
-//            startActivity(liveStreamActivity);
-//        }
-//        else if (selectedItem.equals(getResources().getString(R.string.drawer_live_tv_guide))) {
-//            startDashboardActivty();
-//        }
-//
-//        else if (selectedItem.equals(getResources().getString(R.string.drawer_account_info))) {
-//            Intent accountInfoIntent = new Intent(this, AccountInfoActivity.class);
-//            startActivity(accountInfoIntent);
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_vod))) {
-//            Intent intent = new Intent(this, VodTabViewActivity.class);
-//            startActivity(intent);
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_settings))) {
-//            Intent settingsIntent = new Intent(this, SettingssActivity.class);
-//            startActivity(settingsIntent);
-//        }
-//        else if (selectedItem.equals(getResources().getString(R.string.drawer_logout))) {
-//                SharedPreferences loginPreferences;
-//                SharedPreferences.Editor loginPreferencesEditor;
-//                loginPreferences = context.getSharedPreferences(AppConst.LOGIN_SHARED_PREFERENCE_IPTV, MODE_PRIVATE);
-//                loginPreferencesEditor = loginPreferences.edit();
-//                loginPreferencesEditor.clear();
-//                loginPreferencesEditor.commit();
-//
-//                Toast.makeText(this, context.getResources().getString(R.string.logout_successfully), Toast.LENGTH_SHORT).show();
-//                Intent intentLogout = new Intent(this, LoginWelcomeActivity.class);
-//                SharedPreferences loginPreferencesClientid;
-//                SharedPreferences.Editor loginPreferencesClientidEditor;
-//                loginPreferencesClientid = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//                loginPreferencesClientidEditor = loginPreferencesClientid.edit();
-//                loginPreferencesClientidEditor.clear();
-//                loginPreferencesClientidEditor.commit();
-//                startActivity(intentLogout);
-//                finish();
-//        }
     }
-//
-//    private void startDashboardActivty() {
-//        Intent dashboardActitvityIntent = new Intent(this, DashboardActivity.class);
-//        dashboardActitvityIntent.putExtra(AppConst.LAUNCH_TV_GUIDE, AppConst.LAUNCH_TV_GUIDE);
-//        startActivity(dashboardActitvityIntent);
-//        finish();
-//    }
+
 
     private void prepareListData() {
         listDataHeader = new ArrayList<ExpandedMenuModel>();

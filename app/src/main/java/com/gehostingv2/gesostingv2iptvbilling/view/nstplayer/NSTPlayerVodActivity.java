@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v7.widget.AppCompatImageView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -16,13 +17,17 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gehostingv2.gesostingv2iptvbilling.R;
 import com.gehostingv2.gesostingv2iptvbilling.miscelleneious.common.AppConst;
+import com.gehostingv2.gesostingv2iptvbilling.model.database.LiveStreamCategoryIdDBModel;
 import com.gehostingv2.gesostingv2iptvbilling.model.database.LiveStreamDBHandler;
 import com.gehostingv2.gesostingv2iptvbilling.model.database.LiveStreamsDBModel;
+import com.gehostingv2.gesostingv2iptvbilling.model.database.PasswordStatusDBModel;
 import com.gehostingv2.gesostingv2iptvbilling.view.adapter.SearchableAdapter;
 
 import java.util.ArrayList;
@@ -42,7 +47,7 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
     public View prevButton;
     public View channelListButton;
     public EditText et_search;
-//    public LinearLayout ll_root;
+    //    public LinearLayout ll_root;
     public RelativeLayout rl_middle;
     public ListView listChannels;
     public ArrayList<LiveStreamsDBModel> allMovies;
@@ -58,6 +63,31 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
     private SharedPreferences loginPreferencesSharedPref;
     SearchableAdapter adapter;
     SearchableAdapter mSearchableAdapter;
+
+    public TextView tv_categories_view;
+    private ArrayList<LiveStreamCategoryIdDBModel> allMoviesCategories;
+    private ArrayList<LiveStreamCategoryIdDBModel> liveListDetailAvailable;
+    public LinearLayout ll_categories_view;
+    private int currentCategoryIndex = 0;
+    private AppCompatImageView btn_cat_back;
+    private AppCompatImageView btn_cat_forward;
+
+
+
+
+
+
+    private ArrayList<String> listPassword = new ArrayList<>();
+    private ArrayList<PasswordStatusDBModel> categoryWithPasword;
+    private ArrayList<LiveStreamCategoryIdDBModel> liveListDetailUnlcked;
+    private ArrayList<LiveStreamCategoryIdDBModel> liveListDetailUnlckedDetail;
+    private ArrayList<LiveStreamCategoryIdDBModel> moviesListDetailAvailable;
+    private ArrayList<LiveStreamCategoryIdDBModel> liveListDetail;
+    private ArrayList<LiveStreamsDBModel> movieListDetailUnlcked;
+    private ArrayList<LiveStreamsDBModel> movieListDetailUnlckedDetail;
+
+
+
 //    public boolean clicked;
     /**
      * play video
@@ -84,6 +114,18 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nst_player_vod_activity);
 
+
+
+
+
+        liveListDetailUnlcked = new ArrayList<LiveStreamCategoryIdDBModel>();
+        liveListDetailUnlckedDetail = new ArrayList<LiveStreamCategoryIdDBModel>();
+        liveListDetailAvailable = new ArrayList<LiveStreamCategoryIdDBModel>();
+        liveListDetail = new ArrayList<LiveStreamCategoryIdDBModel>();
+
+
+
+
 //        Config config = getIntent().getParcelableExtra("config");
 //        if (config == null || TextUtils.isEmpty(config.url)) {
 //            Toast.makeText(this, R.string.giraffe_player_url_empty, Toast.LENGTH_SHORT).show();
@@ -103,14 +145,46 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
 //        mFilePath = "http://iptv.dguk.co.uk/timeshift/test1234/4321test/2/2017-10-27:05-00/1313.ts";
         mFilePath = "http://" + serverUrl + ":" + serverPort + "/movie/" + username + "/" + password + "/";
         liveStreamDBHandler = new LiveStreamDBHandler(this);
-        allMovies =
-                liveStreamDBHandler.getAllLiveStreasWithCategoryId("0", "movie");
+//        allMovies =
+//                liveStreamDBHandler.getAllLiveStreasWithCategoryId("0", "movie");
+
+
+
+
+        categoryWithPasword = new ArrayList<PasswordStatusDBModel>();
+        movieListDetailUnlcked = new ArrayList<LiveStreamsDBModel>();
+        movieListDetailUnlckedDetail = new ArrayList<LiveStreamsDBModel>();
+//        moviesListDetailAvailable1 = new ArrayList<LiveStreamsDBModel>();
+        ArrayList<LiveStreamsDBModel> vodAvailable = liveStreamDBHandler.getAllLiveStreasWithCategoryId("0", "movie");
+        int parentalStatusCount = liveStreamDBHandler.getParentalStatusCount();
+        if (parentalStatusCount > 0 && vodAvailable != null) {
+            listPassword = getPasswordSetCategories();
+            if (listPassword != null) {
+                movieListDetailUnlckedDetail = getUnlockedCategoriesAll(vodAvailable,
+                        listPassword);
+            }
+            allMovies = movieListDetailUnlckedDetail;
+        } else {
+            allMovies = vodAvailable;
+        }
+
+
+
+
+
+
+
+
+
         int positionToSelect = 0;
         positionToSelect = getIndexOfMovies(allMovies,currentWindowIndex);
         currentWindowIndex = positionToSelect;
+        getIntent().putExtra("VIDEO_NUM", currentWindowIndex);
+
 
         player = new NSTPlayerVod(this);
         player.setCurrentWindowIndex(currentWindowIndex);
+
 //        player.setTitle(videoTitle + " -- " + Integer.toString(opened_video_id) + " -- " + currentWindowIndex);
         player.setTitle(videoTitle);
         player.setDefaultRetryTime(defaultRetryTime);
@@ -121,11 +195,14 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
         player.showAll();
 //        player.tryFullScreen(true);
         player.play(mFilePath, opened_video_id ,videoExtension);
+        player.hideSystemUi();
 
         findViewById(R.id.exo_next).setOnClickListener(this);
         findViewById(R.id.exo_prev).setOnClickListener(this);
         listChannels = (ListView) findViewById(R.id.lv_ch);
         et_search = (EditText) findViewById(R.id.et_search);
+        ll_categories_view = (LinearLayout) findViewById(R.id.ll_categories_view);
+
 
         playButton = findViewById(R.id.exo_play);
 
@@ -159,7 +236,55 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
             channelListButton.setOnClickListener(this);
         }
 
+        tv_categories_view = (TextView) findViewById(R.id.tv_categories_view);
+        btn_cat_back = (AppCompatImageView) findViewById(R.id.btn_category_back);
+        btn_cat_forward = (AppCompatImageView) findViewById(R.id.btn_category_forward);
+        btn_cat_back.setOnClickListener(this);
+        btn_cat_forward.setOnClickListener(this);
         rl_middle = (RelativeLayout) findViewById(R.id.middle);
+
+
+
+
+
+        tv_categories_view.setText(getResources().getString(R.string.all));
+
+
+
+        allMoviesCategories = liveStreamDBHandler.getAllMovieCategories();
+        LiveStreamCategoryIdDBModel liveStream = new LiveStreamCategoryIdDBModel();
+        liveStream.setLiveStreamCategoryID("0");
+        liveStream.setLiveStreamCategoryName(getResources().getString(R.string.all));
+
+
+
+        int parentalStatusCount1 = liveStreamDBHandler.getParentalStatusCount();
+        if(parentalStatusCount1>0 && allMoviesCategories!=null){
+            listPassword = getPasswordSetCategories();
+            liveListDetailUnlckedDetail = getUnlockedCategories(allMoviesCategories,  //liveListDetail
+                    listPassword);
+            liveListDetailUnlcked.add(0, liveStream);
+            liveListDetailAvailable = liveListDetailUnlckedDetail;
+
+        }else {
+            liveListDetail.add(0, liveStream);
+            liveListDetailAvailable = allMoviesCategories;
+        }
+
+        if(allMoviesCategories!=null) {
+//            allMoviesCategories.add(0, liveStream);
+            liveListDetailAvailable = liveListDetailAvailable;
+        }
+
+
+        if (allMovies != null){
+            setVodListAdapter(allMovies);
+        }
+
+
+
+
+
 //        if (rl_middle != null && listChannels.getVisibility()==View.VISIBLE) {
 //                rl_middle.setOnClickListener(this);
 //        }
@@ -200,6 +325,84 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
 
 //        adapter = new ArrayAdapter<String>(this,
 //                R.layout.channel_list, channelList);
+
+
+
+
+
+
+
+//        }
+    }
+
+
+
+
+
+    private ArrayList<LiveStreamCategoryIdDBModel> getUnlockedCategories(ArrayList<LiveStreamCategoryIdDBModel> liveListDetail,
+
+                                                                         ArrayList<String> listPassword) {
+        for(LiveStreamCategoryIdDBModel user1 : liveListDetail)
+        {
+            boolean flag = false;
+            for(String user2 : listPassword)
+            {
+                if(user1.getLiveStreamCategoryID().equals(user2))
+                {
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag == false)
+            {
+                liveListDetailUnlcked.add(user1);
+            }
+        }
+        return liveListDetailUnlcked;
+    }
+
+    private ArrayList<String> getPasswordSetCategories() {
+        categoryWithPasword =
+                liveStreamDBHandler.getAllPasswordStatus();
+        if(categoryWithPasword!=null) {
+            for (PasswordStatusDBModel listItemLocked : categoryWithPasword) {
+                if (listItemLocked.getPasswordStatus().equals(AppConst.PASSWORD_SET)) {
+                    listPassword.add(listItemLocked.getPasswordStatusCategoryId());
+                }
+            }
+        }
+        return listPassword;
+
+    }
+
+
+
+
+
+
+
+
+    private ArrayList<LiveStreamsDBModel> getUnlockedCategoriesAll(ArrayList<LiveStreamsDBModel> liveListDetail,
+
+                                                                   ArrayList<String> listPassword) {
+        for (LiveStreamsDBModel user1 : liveListDetail) {
+            boolean flag = false;
+            for (String user2 : listPassword) {
+                if (user1.getCategoryId().equals(user2)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag == false) {
+                movieListDetailUnlcked.add(user1);
+            }
+        }
+        return movieListDetailUnlcked;
+    }
+
+    public void setVodListAdapter(final ArrayList<LiveStreamsDBModel> allMovies){
+        int video_num = getIntent().getIntExtra("VIDEO_NUM", 0);
+        int positionToSelect = video_num;
         adapter = new SearchableAdapter(this,allMovies);
 //            ListView listView = (ListView)
 //                    findViewById(R.id.lv_ch);
@@ -225,11 +428,11 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
 //            listChannels.setAdapter(adapter);
 //            listChannels.setTextFilterEnabled(true);
             listChannels.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
 //                Utils.showToast(context, "Testing: "+position);
 //                String a = (String) parent.getAdapter().getItem(position);
-                view.setSelected(true);
+                    view.setSelected(true);
                     ArrayList<LiveStreamsDBModel> filteredData = adapter.getFilteredData();
                     if(filteredData!=null){
                         int num = Integer.parseInt(filteredData.get(position).getNum());
@@ -240,7 +443,7 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
                         player.setTitle(filteredData.get(position).getName());
                         player.play(mFilePath, Integer.parseInt(filteredData.get(position).getStreamId()),filteredData.get(position).getContaiinerExtension());
                     }else{
-    //                    player.setCurrentWindowIndex(position + 1);
+                        //                    player.setCurrentWindowIndex(position + 1);
                         int num = Integer.parseInt(allMovies.get(position).getNum());
                         num = getIndexOfMovies(allMovies,num);
                         player.setCurrentWindowIndex(num);
@@ -251,6 +454,7 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
                     }
                     listChannels.setVisibility(View.GONE);
                     et_search.setVisibility(View.GONE);
+                    ll_categories_view.setVisibility(View.GONE);
 
 
                 }
@@ -286,13 +490,90 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
 
 
         }
+    }
+
+    public void backbutton(){
+        if(currentCategoryIndex!=0) {
+            currentCategoryIndex = currentCategoryIndex - 1;
+        }
+
+        if (liveListDetailAvailable != null && liveListDetailAvailable.size() > 0 && currentCategoryIndex < liveListDetailAvailable.size()) {
+            String currentCatID = liveListDetailAvailable.get(currentCategoryIndex).getLiveStreamCategoryID();
+            String currentCatName = liveListDetailAvailable.get(currentCategoryIndex).getLiveStreamCategoryName();
+            if (liveStreamDBHandler != null) {
+//                allMovies =
+//                        liveStreamDBHandler.getAllLiveStreasWithCategoryId(currentCatID, "movie");
 
 
 
 
 
+                ArrayList<LiveStreamsDBModel> vodAvailable = liveStreamDBHandler.getAllLiveStreasWithCategoryId(currentCatID, "movie");
 
-//        }
+                categoryWithPasword = new ArrayList<PasswordStatusDBModel>();
+                movieListDetailUnlcked = new ArrayList<LiveStreamsDBModel>();
+                movieListDetailUnlckedDetail = new ArrayList<LiveStreamsDBModel>();
+//                moviesListDetailAvailable1 = new ArrayList<LiveStreamsDBModel>();
+
+                int parentalStatusCount = liveStreamDBHandler.getParentalStatusCount();
+                if (parentalStatusCount > 0 && vodAvailable != null) {
+                    listPassword = getPasswordSetCategories();
+                    if (listPassword != null) {
+                        movieListDetailUnlckedDetail = getUnlockedCategoriesAll(vodAvailable,
+                                listPassword);
+                    }
+                    allMovies = movieListDetailUnlckedDetail;
+                } else {
+                    allMovies = vodAvailable;
+                }
+            }
+            if (tv_categories_view != null) {
+                tv_categories_view.setText(currentCatName);
+            }
+            setVodListAdapter(allMovies);
+        }
+
+    }
+    public void nextbutton(){
+        if(currentCategoryIndex!=liveListDetailAvailable.size()-1) {
+            currentCategoryIndex = currentCategoryIndex + 1;
+        }
+
+        if (liveListDetailAvailable != null && liveListDetailAvailable.size() > 0 && currentCategoryIndex < liveListDetailAvailable.size()) {
+            String currentCatID = liveListDetailAvailable.get(currentCategoryIndex).getLiveStreamCategoryID();
+            String currentCatName = liveListDetailAvailable.get(currentCategoryIndex).getLiveStreamCategoryName();
+            if (liveStreamDBHandler != null) {
+//                allMovies =
+//                        liveStreamDBHandler.getAllLiveStreasWithCategoryId(currentCatID, "movie");
+
+
+
+                ArrayList<LiveStreamsDBModel> vodAvailable = liveStreamDBHandler.getAllLiveStreasWithCategoryId(currentCatID, "movie");
+
+                categoryWithPasword = new ArrayList<PasswordStatusDBModel>();
+                movieListDetailUnlcked = new ArrayList<LiveStreamsDBModel>();
+                movieListDetailUnlckedDetail = new ArrayList<LiveStreamsDBModel>();
+//                moviesListDetailAvailable1 = new ArrayList<LiveStreamsDBModel>();
+
+                int parentalStatusCount = liveStreamDBHandler.getParentalStatusCount();
+                if (parentalStatusCount > 0 && vodAvailable != null) {
+                    listPassword = getPasswordSetCategories();
+                    if (listPassword != null) {
+                        movieListDetailUnlckedDetail = getUnlockedCategoriesAll(vodAvailable,
+                                listPassword);
+                    }
+                    allMovies = movieListDetailUnlckedDetail;
+                } else {
+                    allMovies = vodAvailable;
+                }
+
+            }
+            if (tv_categories_view != null) {
+                tv_categories_view.setText(currentCatName);
+            }
+            setVodListAdapter(allMovies);
+        }
+
     }
 
     public int getIndexOfMovies(ArrayList<LiveStreamsDBModel> allMovies, int num) {
@@ -319,6 +600,7 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
     protected void onResume() {
         super.onResume();
         if (player != null) {
+            player.hideSystemUi();
             player.onResume();
         }
     }
@@ -361,6 +643,7 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
                     findViewById(R.id.exo_next).performClick();
                 }
                 return true;
+
             default:
                 return super.onKeyUp(keyCode, event);
         }
@@ -373,15 +656,43 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
 
         switch (keyCode) {
 
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                if(listChannels!=null && listChannels.getVisibility() == View.VISIBLE){
+                    if(et_search!=null){
+                        et_search.setText("");
+                    }
+                    backbutton();
+                    listChannels.setFocusable(true);
+                    listChannels.requestFocus();
+
+                }else{
+                    showTitleBarAndFooter();
+                    findViewById(R.id.exo_rew).performClick();
+                }
+                return true;
 
             case KeyEvent.KEYCODE_DPAD_RIGHT:
+                if(listChannels!=null && listChannels.getVisibility() == View.VISIBLE){
+                    if(et_search!=null){
+                        et_search.setText("");
+                    }
+                    nextbutton();
+                    listChannels.setFocusable(true);
+                    listChannels.requestFocus();
+
+                }else{
+                    showTitleBarAndFooter();
+                    findViewById(R.id.exo_ffwd).performClick();
+                }
+                return true;
+
+
             case KeyEvent.KEYCODE_MEDIA_STEP_FORWARD:
             case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
                 showTitleBarAndFooter();
                 findViewById(R.id.exo_ffwd).performClick();
                 return true;
 
-            case KeyEvent.KEYCODE_DPAD_LEFT:
             case KeyEvent.KEYCODE_MEDIA_STEP_BACKWARD:
             case KeyEvent.KEYCODE_MEDIA_REWIND:
                 showTitleBarAndFooter();
@@ -401,6 +712,16 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
                 showTitleBarAndFooter();
                 listChannels.setVisibility(View.VISIBLE);
                 et_search.setVisibility(View.VISIBLE);
+                ll_categories_view.setVisibility(View.VISIBLE);
+//                et_search.requestFocus();
+                listChannels.setFocusable(true);
+                listChannels.requestFocus();
+                return true;
+            case KeyEvent.KEYCODE_ENTER:
+                showTitleBarAndFooter();
+                listChannels.setVisibility(View.VISIBLE);
+                et_search.setVisibility(View.VISIBLE);
+                ll_categories_view.setVisibility(View.VISIBLE);
 //                et_search.requestFocus();
                 listChannels.setFocusable(true);
                 listChannels.requestFocus();
@@ -457,7 +778,7 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
     }
 
 
-//    private void doPauseResume() {
+    //    private void doPauseResume() {
 //        if (player == null) {
 //            return;
 //        }
@@ -572,12 +893,20 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
                 }
                 break;
             case R.id.btn_list:
-                if(listChannels!=null && et_search!=null) {
+                if(listChannels!=null && et_search!=null && ll_categories_view!=null) {
                     toggleView(listChannels);
                     toggleView(et_search);
+                    toggleView(ll_categories_view);
                     listChannels.setFocusable(true);
                     listChannels.requestFocus();
                 }
+                break;
+
+            case R.id.btn_category_back:
+                backbutton();
+                break;
+            case R.id.btn_category_forward:
+                nextbutton();
                 break;
 
 //            case R.id.middle:
@@ -632,6 +961,10 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
             if(et_search!=null && et_search.getVisibility() == View.VISIBLE) {
                 et_search.setVisibility(View.GONE);
             }
+            if(ll_categories_view!=null && ll_categories_view.getVisibility() == View.VISIBLE) {
+                ll_categories_view.setVisibility(View.GONE);
+            }
+
             if(findViewById(R.id.app_video_top_box).getVisibility() == View.VISIBLE) {
                 hideTitleBarAndFooter();
             }
@@ -643,6 +976,9 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
                 listChannels.setVisibility(View.GONE);
                 if (et_search != null && et_search.getVisibility() == View.VISIBLE) {
                     et_search.setVisibility(View.GONE);
+                }
+                if(ll_categories_view!=null && ll_categories_view.getVisibility() == View.VISIBLE) {
+                    ll_categories_view.setVisibility(View.GONE);
                 }
             }
             return;
@@ -656,7 +992,7 @@ public class NSTPlayerVodActivity extends Activity implements View.OnClickListen
 
     public static class Config implements Parcelable {
 
-        public static final Creator<Config> CREATOR = new Creator<Config>() {
+        public static final Parcelable.Creator<Config> CREATOR = new Parcelable.Creator<Config>() {
             public Config createFromParcel(Parcel in) {
                 return new Config(in);
             }

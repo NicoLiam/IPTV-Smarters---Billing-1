@@ -111,7 +111,9 @@ public class AppConst {
 
 
 //    public static final String BASE_URL = "http://iptvtugapt.site:8080";
+//    public static final String BASE_URL = "http://pahosting.re:80";
     public static final String BASE_URL = "http://qqtv.nl";
+
 
     public static final String SHARED_PREFERENCE_IPTV = "sharedPreferenceIPTV";
     public static final String LOGIN_SHARED_PREFERENCE_IPTV = "loginPrefIPTV";

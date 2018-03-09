@@ -373,4 +373,7 @@
     <string name="please_wait_invoice">Aguarde enquanto carregamos os resultados para você</string>
     <string name="small_problem">Desculpe, este vídeo não pode ser reproduzido. Tente novamente ou escolha outro vídeo.</string>
     <string name="not_support">o jogador não suporta este dispositivo</string>
+    <string name="live_categories">VIVER CATEGORIAS</string>
+    <string name="vod_categories">CATEGORIAS DE VOD</string>
+
 </resources>

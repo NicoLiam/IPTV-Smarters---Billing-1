@@ -269,22 +269,6 @@ public class Utils {
         return retrofit;
     }
 
-//    public static Retrofit retrofitObjectIPTVWithTimeRaiseRx() {
-//        OkHttpClient client = new OkHttpClient.Builder()
-//                .connectTimeout(30, TimeUnit.SECONDS)
-//                .writeTimeout(30, TimeUnit.SECONDS)
-//                .readTimeout(30, TimeUnit.SECONDS)
-//                .build();
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(AppConst.BASE_URL)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-//                .build();
-//
-//        return retrofit;
-//    }
-
-
     public static String generateHashSHA512(String stringToGenHash) {
         MessageDigest md = null;
         try {

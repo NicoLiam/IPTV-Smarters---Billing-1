@@ -58,6 +58,7 @@ import com.gehostingv2.gesostingv2iptvbilling.model.database.ExpandedMenuModel;
 import com.gehostingv2.gesostingv2iptvbilling.model.database.FavouriteDBModel;
 import com.gehostingv2.gesostingv2iptvbilling.model.database.LiveStreamCategoryIdDBModel;
 import com.gehostingv2.gesostingv2iptvbilling.model.database.LiveStreamDBHandler;
+import com.gehostingv2.gesostingv2iptvbilling.model.database.PasswordStatusDBModel;
 import com.gehostingv2.gesostingv2iptvbilling.presenter.ClientDetailPresenter;
 import com.gehostingv2.gesostingv2iptvbilling.presenter.VodPresenter;
 import com.gehostingv2.gesostingv2iptvbilling.view.adapter.ExpandndableListAdapter;
@@ -192,6 +193,13 @@ public class VodListViewActivity extends AppCompatActivity implements VodInterfa
     private RecyclerView.LayoutManager mLayoutManager;
 
     private VodAdapterNewFlow mAdapter;
+
+    private ArrayList<String> listPassword = new ArrayList<>();
+    private ArrayList<PasswordStatusDBModel> categoryWithPasword;
+    private ArrayList<LiveStreamCategoryIdDBModel> liveListDetailUnlcked;
+    private ArrayList<LiveStreamCategoryIdDBModel> liveListDetailUnlckedDetail;
+    private ArrayList<LiveStreamCategoryIdDBModel> liveListDetailAvailable;
+    private ArrayList<LiveStreamCategoryIdDBModel> liveListDetail;
 
 
     @Override
@@ -379,112 +387,8 @@ public class VodListViewActivity extends AppCompatActivity implements VodInterfa
             getSupportFragmentManager().popBackStack(name, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
         FragmentTransaction ft = fragmentManager.beginTransaction();
-
         Utils.startActivityOtherDash(context,selectedItem);
-
-//        if (selectedItem.equals(getResources().getString(R.string.drawer_home))) {
-//            Intent dashboardActivtyIntent = new Intent(this, DashboardActivity.class);
-//            startActivity(dashboardActivtyIntent);
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_services_my_services))) {
-//            SharedPreferences prefServices = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//            clientId = prefServices.getInt(AppConst.CLIENT_ID, -1);
-//            if (clientId == -1 || clientId == 0) {
-//                Intent intentLogin = new Intent(this, LoginWHMCSActivity.class);
-//                intentLogin.putExtra(AppConst.ACTIVITY_SERVICES, AppConst.ACTIVITY_SERVICES);
-//                startActivity(intentLogin);
-//            } else {
-//                Intent servicesIntent = new Intent(this, ServicesActivity.class);
-//                startActivity(servicesIntent);
-//            }
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_billing_my_invoices))) {
-//            SharedPreferences prefInvoice = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//            clientId = prefInvoice.getInt(AppConst.CLIENT_ID, -1);
-//            if (clientId == -1 || clientId == 0) {
-//                Intent intentLogin = new Intent(this, LoginWHMCSActivity.class);
-//                intentLogin.putExtra(AppConst.ACTIVITY_INVOICES, AppConst.ACTIVITY_INVOICES);
-//                startActivity(intentLogin);
-//            } else {
-//                Intent invoiceActivityIntent = new Intent(this, InvoicesActivity.class);
-//                startActivity(invoiceActivityIntent);
-//            }
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_services_order_new_services))) {
-//            SharedPreferences prefOrderNewServices = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//            clientId = prefOrderNewServices.getInt(AppConst.CLIENT_ID, -1);
-//            if (clientId == -1 || clientId == 0) {
-//                Intent intentLogin = new Intent(this, LoginWHMCSActivity.class);
-//                intentLogin.putExtra(AppConst.ACTIVITY_INVOICES, AppConst.ACTIVITY_INVOICES);
-//                startActivity(intentLogin);
-//            } else {
-//                Intent invoiceActivityIntent = new Intent(this, OrderNewServicesActivtiy.class);
-//                startActivity(invoiceActivityIntent);
-//            }
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_support_ticket))) {
-//            SharedPreferences prefTicket = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//            clientId = prefTicket.getInt(AppConst.CLIENT_ID, -1);
-//            if (clientId == -1 || clientId == 0) {
-//                Intent intentLogin = new Intent(this, LoginWHMCSActivity.class);
-//                intentLogin.putExtra(AppConst.ACTIVITY_TICKETS, AppConst.ACTIVITY_TICKETS);
-//                startActivity(intentLogin);
-//            } else {
-//                Intent ticketsActivityIntent = new Intent(this, TicketsActivity.class);
-//                startActivity(ticketsActivityIntent);
-//            }
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_support_open_ticket))) {
-//            SharedPreferences prefOpenTicket = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//            clientId = prefOpenTicket.getInt(AppConst.CLIENT_ID, -1);
-//            if (clientId == -1 || clientId == 0) {
-//                Intent intentLogin = new Intent(this, LoginWHMCSActivity.class);
-//                intentLogin.putExtra(AppConst.ACTIVITY_OPEN_TICKETS, AppConst.ACTIVITY_OPEN_TICKETS);
-//                startActivity(intentLogin);
-//            } else {
-//                Intent openTicketIntent = new Intent(this, OpenTicketActivity.class);
-//                startActivity(openTicketIntent);
-//            }
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_live_tv))) {
-//            Intent liveStreamActivity = new Intent(this, LiveTVTabViewActivity.class);
-//            startActivity(liveStreamActivity);
-//        }
-//        else if (selectedItem.equals(getResources().getString(R.string.drawer_live_tv_guide))) {
-//            startDashboardActivty();
-//        }
-//
-//        else if (selectedItem.equals(getResources().getString(R.string.drawer_account_info))) {
-//            Intent accountInfoIntent = new Intent(this, AccountInfoActivity.class);
-//            startActivity(accountInfoIntent);
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_vod))) {
-//            Intent intent = new Intent(this, VodTabViewActivity.class);
-//            startActivity(intent);
-//        } else if (selectedItem.equals(getResources().getString(R.string.drawer_settings))) {
-//            Intent settingsIntent = new Intent(this, SettingssActivity.class);
-//            startActivity(settingsIntent);
-//        }
-//        else if (selectedItem.equals(getResources().getString(R.string.drawer_logout))) {
-//                SharedPreferences loginPreferences;
-//                SharedPreferences.Editor loginPreferencesEditor;
-//                loginPreferences = context.getSharedPreferences(AppConst.LOGIN_SHARED_PREFERENCE_IPTV, MODE_PRIVATE);
-//                loginPreferencesEditor = loginPreferences.edit();
-//                loginPreferencesEditor.clear();
-//                loginPreferencesEditor.commit();
-//
-//                Toast.makeText(this, context.getResources().getString(R.string.logout_successfully), Toast.LENGTH_SHORT).show();
-//                Intent intentLogout = new Intent(this, LoginWelcomeActivity.class);
-//                SharedPreferences loginPreferencesClientid;
-//                SharedPreferences.Editor loginPreferencesClientidEditor;
-//                loginPreferencesClientid = getSharedPreferences(AppConst.SHARED_PREFERENCE_WHMCS, MODE_PRIVATE);
-//                loginPreferencesClientidEditor = loginPreferencesClientid.edit();
-//                loginPreferencesClientidEditor.clear();
-//                loginPreferencesClientidEditor.commit();
-//                startActivity(intentLogout);
-//                finish();
-//        }
     }
-//
-//    private void startDashboardActivty() {
-//        Intent dashboardActitvityIntent = new Intent(this, DashboardActivity.class);
-//        dashboardActitvityIntent.putExtra(AppConst.LAUNCH_TV_GUIDE, AppConst.LAUNCH_TV_GUIDE);
-//        startActivity(dashboardActitvityIntent);
-//        finish();
-//    }
 
     private void prepareListData() {
         listDataHeader = new ArrayList<ExpandedMenuModel>();
@@ -606,13 +510,14 @@ public class VodListViewActivity extends AppCompatActivity implements VodInterfa
         } else {
             mLayoutManager = new GridLayoutManager(this, 1);
         }
-
         myRecyclerView.setLayoutManager(mLayoutManager);
         myRecyclerView.setVisibility(View.VISIBLE);
-
         if (context != null) {
+            liveListDetailUnlcked = new ArrayList<LiveStreamCategoryIdDBModel>();
+            liveListDetailUnlckedDetail = new ArrayList<LiveStreamCategoryIdDBModel>();
+            liveListDetailAvailable = new ArrayList<LiveStreamCategoryIdDBModel>();
+            liveListDetail = new ArrayList<LiveStreamCategoryIdDBModel>();
             liveStreamDBHandler = new LiveStreamDBHandler(context);
-//            ArrayList<LiveStreamCategoryIdDBModel> moviesCategory = liveStreamDBHandler.getAllMovieCategories();
             ArrayList<LiveStreamCategoryIdDBModel> moviesCategory = liveStreamDBHandler.getAllMovieCategoriesHavingParentIdZero();
             ArrayList<LiveStreamCategoryIdDBModel> moviesCategoryFinal = new ArrayList<>();
             LiveStreamCategoryIdDBModel liveStream = new LiveStreamCategoryIdDBModel();
@@ -620,19 +525,96 @@ public class VodListViewActivity extends AppCompatActivity implements VodInterfa
             LiveStreamCategoryIdDBModel liveStream1 = new LiveStreamCategoryIdDBModel();
             liveStream1.setLiveStreamCategoryID("-1");
             liveStream1.setLiveStreamCategoryName(getResources().getString(R.string.favourites));
-
             liveStream.setLiveStreamCategoryID("0");  //(String.valueOf(size+1))
             liveStream.setLiveStreamCategoryName(getResources().getString(R.string.all));
-
-            moviesCategory.add(0, liveStream);
-            moviesCategory.add(1, liveStream1);
-
-            mAdapter = new VodAdapterNewFlow(moviesCategory, context);
-//            linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-//            myRecyclerView.setLayoutManager(linearLayoutManager);
+            liveListDetail = moviesCategory;
+            int parentalStatusCount = liveStreamDBHandler.getParentalStatusCount();
+            if(parentalStatusCount>0 && liveListDetail!=null){
+                listPassword = getPasswordSetCategories();
+                liveListDetailUnlckedDetail = getUnlockedCategories(moviesCategory,  //liveListDetail
+                        listPassword);
+                liveListDetailUnlcked.add(0, liveStream);
+                liveListDetailUnlcked.add(1, liveStream1);
+                liveListDetailAvailable = liveListDetailUnlckedDetail;
+            }else {
+                liveListDetail.add(0, liveStream);
+                liveListDetail.add(1, liveStream1);
+                liveListDetailAvailable = liveListDetail;
+            }
+            mAdapter = new VodAdapterNewFlow(liveListDetailAvailable, context);
             myRecyclerView.setItemAnimator(new DefaultItemAnimator());
             myRecyclerView.setAdapter(mAdapter);
         }
+
+
+//        categoriesList = new ArrayList<>();
+//        subCategoryList = new ArrayList<>();
+//        liveStreamDBHandler = new LiveStreamDBHandler(context);
+//        myRecyclerView.setHasFixedSize(true);
+//        mLayoutManager = new LinearLayoutManager(context);
+//        if ((getResources().getConfiguration().screenLayout &
+//                Configuration.SCREENLAYOUT_SIZE_MASK) ==
+//                Configuration.SCREENLAYOUT_SIZE_LARGE) {
+//            mLayoutManager = new GridLayoutManager(this, 2);
+//        } else {
+//            mLayoutManager = new GridLayoutManager(this, 1);
+//        }
+//        myRecyclerView.setLayoutManager(mLayoutManager);
+//        myRecyclerView.setVisibility(View.VISIBLE);
+//        if (context != null) {
+//            liveStreamDBHandler = new LiveStreamDBHandler(context);
+//            ArrayList<LiveStreamCategoryIdDBModel> moviesCategory = liveStreamDBHandler.getAllMovieCategoriesHavingParentIdZero();
+//            ArrayList<LiveStreamCategoryIdDBModel> moviesCategoryFinal = new ArrayList<>();
+//            LiveStreamCategoryIdDBModel liveStream = new LiveStreamCategoryIdDBModel();
+//            final int size = moviesCategoryFinal.size();
+//            LiveStreamCategoryIdDBModel liveStream1 = new LiveStreamCategoryIdDBModel();
+//            liveStream1.setLiveStreamCategoryID("-1");
+//            liveStream1.setLiveStreamCategoryName(getResources().getString(R.string.favourites));
+//            liveStream.setLiveStreamCategoryID("0");  //(String.valueOf(size+1))
+//            liveStream.setLiveStreamCategoryName(getResources().getString(R.string.all));
+//            moviesCategory.add(0, liveStream);
+//            moviesCategory.add(1, liveStream1);
+//            mAdapter = new VodAdapterNewFlow(moviesCategory, context);
+//            myRecyclerView.setItemAnimator(new DefaultItemAnimator());
+//            myRecyclerView.setAdapter(mAdapter);
+//        }
+    }
+
+
+
+    private ArrayList<LiveStreamCategoryIdDBModel> getUnlockedCategories(ArrayList<LiveStreamCategoryIdDBModel> liveListDetail,
+
+                                                                         ArrayList<String> listPassword) {
+        for(LiveStreamCategoryIdDBModel user1 : liveListDetail)
+        {
+            boolean flag = false;
+            for(String user2 : listPassword)
+            {
+                if(user1.getLiveStreamCategoryID().equals(user2))
+                {
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag == false)
+            {
+                liveListDetailUnlcked.add(user1);
+            }
+        }
+        return liveListDetailUnlcked;
+    }
+
+    private ArrayList<String> getPasswordSetCategories() {
+        categoryWithPasword =
+                liveStreamDBHandler.getAllPasswordStatus();
+        if(categoryWithPasword!=null) {
+            for (PasswordStatusDBModel listItemLocked : categoryWithPasword) {
+                if (listItemLocked.getPasswordStatus().equals(AppConst.PASSWORD_SET)) {
+                    listPassword.add(listItemLocked.getPasswordStatusCategoryId());
+                }
+            }
+        }
+        return listPassword;
     }
 
     private void changeStatusBarColor() {

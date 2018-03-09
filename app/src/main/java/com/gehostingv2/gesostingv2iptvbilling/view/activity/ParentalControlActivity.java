@@ -53,9 +53,10 @@ import com.gehostingv2.gesostingv2iptvbilling.view.fragment.InvoicesUnpaidFragme
 import com.gehostingv2.gesostingv2iptvbilling.view.fragment.MakePaymentFragment;
 import com.gehostingv2.gesostingv2iptvbilling.view.fragment.OpenTicketFragment;
 import com.gehostingv2.gesostingv2iptvbilling.view.fragment.OpenTicketGeneralEnquiriesDepartmentFragment;
-import com.gehostingv2.gesostingv2iptvbilling.view.fragment.ParentalControlCategoriesFragment;
+import com.gehostingv2.gesostingv2iptvbilling.view.fragment.ParentalControlLiveCatFragment;
 import com.gehostingv2.gesostingv2iptvbilling.view.fragment.ParentalControlFragment;
 import com.gehostingv2.gesostingv2iptvbilling.view.fragment.ParentalControlSettingFragment;
+import com.gehostingv2.gesostingv2iptvbilling.view.fragment.ParentalControlVODCatFragment;
 import com.gehostingv2.gesostingv2iptvbilling.view.fragment.PaymentSuccessfulFragment;
 import com.gehostingv2.gesostingv2iptvbilling.view.fragment.PendingServicesFragment;
 import com.gehostingv2.gesostingv2iptvbilling.view.fragment.PlayerSelectionFragment;
@@ -103,8 +104,9 @@ public class ParentalControlActivity extends AppCompatActivity implements Client
         MakePaymentFragment.OnFragmentInteractionListener,
         PaymentSuccessfulFragment.OnFragmentInteractionListener,
         TicketsHomeFragment.OnFragmentInteractionListener,
-        ParentalControlCategoriesFragment.OnFragmentInteractionListener,
-        ParentalControlSettingFragment.OnFragmentInteractionListener{
+        ParentalControlLiveCatFragment.OnFragmentInteractionListener,
+        ParentalControlSettingFragment.OnFragmentInteractionListener,
+        ParentalControlVODCatFragment.OnFragmentInteractionListener{
 
     @BindView(R.id.tv_header_title)
     ImageView tvHeaderTitle;

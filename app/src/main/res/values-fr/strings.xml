@@ -355,5 +355,8 @@ Si vous ne trouvez pas de solution à vos problèmes dans notre base de connaiss
     <string name="please_wait_invoice">Veuillez patienter pendant le chargement des résultats pour vous</string>
     <string name="small_problem">Désolé, cette vidéo ne peut être lue. Veuillez réessayer ou choisir une autre vidéo.</string>
     <string name="not_support">joueur ne supporte pas cet appareil</string>
+    <string name="live_categories">CATÉGORIES LIVE</string>
+    <string name="vod_categories">CATÉGORIES VOD</string>
+
 </resources>
 

@@ -272,12 +272,42 @@ public class VodFragment extends Fragment implements NavigationView.OnNavigation
         }
 
 
+//        if (context != null) {
+//            LiveStreamDBHandler liveStreamDBHandler = new LiveStreamDBHandler(context);
+//            ArrayList<LiveStreamsDBModel> channelAvailable = liveStreamDBHandler.getAllLiveStreasWithCategoryId("0", "movie");
+//            onFinish();
+//            if (channelAvailable != null && myRecyclerView != null && channelAvailable.size() != 0) {
+//                vodAdapter = new VodAdapter(channelAvailable, getContext());
+//                myRecyclerView.setAdapter(vodAdapter);
+//            } else {
+//
+//                if (tvNoStream != null) {
+//                    tvNoStream.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        }
+
         if (context != null) {
             LiveStreamDBHandler liveStreamDBHandler = new LiveStreamDBHandler(context);
+            categoryWithPasword = new ArrayList<PasswordStatusDBModel>();
+            liveListDetailUnlcked = new ArrayList<LiveStreamsDBModel>();
+            liveListDetailUnlckedDetail = new ArrayList<LiveStreamsDBModel>();
+            liveListDetailAvailable = new ArrayList<LiveStreamsDBModel>();
             ArrayList<LiveStreamsDBModel> channelAvailable = liveStreamDBHandler.getAllLiveStreasWithCategoryId("0", "movie");
+            int parentalStatusCount = liveStreamDBHandler.getParentalStatusCount();
+            if (parentalStatusCount > 0 && channelAvailable != null) {
+                listPassword = getPasswordSetCategories();
+                if (listPassword != null) {
+                    liveListDetailUnlckedDetail = getUnlockedCategories(channelAvailable,
+                            listPassword);
+                }
+                liveListDetailAvailable = liveListDetailUnlckedDetail;
+            } else {
+                liveListDetailAvailable = channelAvailable;
+            }
             onFinish();
-            if (channelAvailable != null && myRecyclerView != null && channelAvailable.size() != 0) {
-                vodAdapter = new VodAdapter(channelAvailable, getContext());
+            if (liveListDetailAvailable != null && myRecyclerView != null && liveListDetailAvailable.size() != 0) {
+                vodAdapter = new VodAdapter(liveListDetailAvailable, getContext());
                 myRecyclerView.setAdapter(vodAdapter);
             } else {
 
@@ -286,6 +316,40 @@ public class VodFragment extends Fragment implements NavigationView.OnNavigation
                 }
             }
         }
+    }
+
+
+
+    private ArrayList<LiveStreamsDBModel> getUnlockedCategories(ArrayList<LiveStreamsDBModel> liveListDetail,
+
+                                                                ArrayList<String> listPassword) {
+        for (LiveStreamsDBModel user1 : liveListDetail) {
+            boolean flag = false;
+            for (String user2 : listPassword) {
+                if (user1.getCategoryId().equals(user2)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag == false) {
+                liveListDetailUnlcked.add(user1);
+            }
+        }
+        return liveListDetailUnlcked;
+    }
+
+    private ArrayList<String> getPasswordSetCategories() {
+        categoryWithPasword =
+                liveStreamDBHandler.getAllPasswordStatus();
+        if (categoryWithPasword != null) {
+            for (PasswordStatusDBModel listItemLocked : categoryWithPasword) {
+                if (listItemLocked.getPasswordStatus().equals(AppConst.PASSWORD_SET)) {
+                    listPassword.add(listItemLocked.getPasswordStatusCategoryId());
+                }
+            }
+        }
+        return listPassword;
+
     }
 
 
@@ -534,12 +598,12 @@ public class VodFragment extends Fragment implements NavigationView.OnNavigation
                 if (getActiveLiveStreamCategoryId.equals("0")) {
                     editor.putInt(AppConst.VOD, 0);
                     editor.commit();
-                    initialize();
+                    initialize1();
                     getAllMovies();
                 } else if (getActiveLiveStreamCategoryId.equals("-1")) {
                     editor.putInt(AppConst.VOD, 0);
                     editor.commit();
-                    initialize();
+                    initialize1();
                 } else {
                     subCategoryListFinal_menu.clear();
                     subCategoryListFinal_menu = liveStreamDBHandler.getAllMovieCategoriesHavingParentIdNotZero(getActiveLiveStreamCategoryId);
@@ -547,7 +611,7 @@ public class VodFragment extends Fragment implements NavigationView.OnNavigation
                     } else {
                         editor.putInt(AppConst.VOD, 0);
                         editor.commit();
-                        initialize();
+                        initialize1();
                     }
                 }
 
@@ -563,18 +627,18 @@ public class VodFragment extends Fragment implements NavigationView.OnNavigation
                     editor.putInt(AppConst.VOD, 1);
                     editor.commit();
                     getAllMovies();
-                    initialize1();
+                    initialize();
                 } else if (getActiveLiveStreamCategoryId.equals("-1")) {
                     editor.putInt(AppConst.VOD, 1);
                     editor.commit();
-                    initialize1();
+                    initialize();
                 } else {
                     subCategoryListFinal_menu = liveStreamDBHandler.getAllMovieCategoriesHavingParentIdNotZero(getActiveLiveStreamCategoryId);
                     if (subCategoryListFinal_menu.size() > 0) {
                     } else {
                         editor.putInt(AppConst.VOD, 1);
                         editor.commit();
-                        initialize1();
+                        initialize();
                     }
                 }
 

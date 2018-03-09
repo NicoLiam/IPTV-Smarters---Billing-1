@@ -302,6 +302,22 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.MyViewHolder>  {
             });
 
 
+            holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    popmenu(holder,
+                            streamId,
+                            categoryId,
+                            movieName,
+                            selectedPlayer,
+                            streamType,
+                            containerExtension,
+                            num,
+                            name);
+                    return true;
+                }
+            });
+
             holder.MovieImage.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
