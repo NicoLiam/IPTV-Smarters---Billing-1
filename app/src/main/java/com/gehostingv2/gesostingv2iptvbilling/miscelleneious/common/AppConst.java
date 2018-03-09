@@ -110,7 +110,8 @@ public class AppConst {
      */
 
 
-    public static final String BASE_URL = "http://iptvtugapt.site:8080";
+//    public static final String BASE_URL = "http://iptvtugapt.site:8080";
+    public static final String BASE_URL = "http://qqtv.nl";
 
     public static final String SHARED_PREFERENCE_IPTV = "sharedPreferenceIPTV";
     public static final String LOGIN_SHARED_PREFERENCE_IPTV = "loginPrefIPTV";
@@ -144,6 +145,7 @@ public class AppConst {
 
     public static final String ACTION_IPTV_CREDENTIALS = "getIPTVActiveService";
     public static final String NETWORK_ERROR_OCCURED = "Network error occured! Please try again";
+    public static final String FAILED_TO_CONNECT = "Could not connect to Server !";
 
     public static final String FORGETPASS = "forgetpassword";
     public static final String USERNAME_PASSWORD_IPTV_ISSUE = "Your IPTV credentials are insufficient";
@@ -186,7 +188,12 @@ public class AppConst {
     public static final String SKIP_BUTTON_PREF = "skip";
     public static final String LOGIN_PREF_EPG_CHANNEL_UPDATE = "epgchannelupdate";
     public static final String LOGIN_PREF_SORT = "sort";
+    public static final String LOGIN_PREF_SORT_VOD = "sort_vod";
+    public static final String LOGIN_PREF_SORT_TV_ARCHIVE = "sort_tv_archive";
     public static final String LOGIN_PREF_LIVE_VOD_LAYOUT = "livevodlayout";
+
+    public static final String LOGIN_SHARED_PREFERENCE_IS_XTREAM_1_06 = "xtream1.06";
+    public static final String IS_XTREAM_1_06 = "isxtream1_06";
 
 
 

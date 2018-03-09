@@ -169,7 +169,7 @@ public class VodFragment extends Fragment implements NavigationView.OnNavigation
 
 
 
-        SharedPreferencesSort  = getActivity().getSharedPreferences(AppConst.LOGIN_PREF_SORT,MODE_PRIVATE);
+        SharedPreferencesSort  = getActivity().getSharedPreferences(AppConst.LOGIN_PREF_SORT_VOD,MODE_PRIVATE);
         SharedPreferencesSortEditor=SharedPreferencesSort.edit();
         String sort_string = SharedPreferencesSort.getString(AppConst.LOGIN_PREF_SORT,"");
         if(sort_string.equals("")){

@@ -741,28 +741,43 @@ public class LiveStreamDBHandler extends SQLiteOpenHelper {
 
     public ArrayList<LiveStreamsDBModel> getAllLiveStreasWithCategoryId(String cateogryId, String type) {  // String categoryId
         SharedPreferences sort_prefrence = context.getSharedPreferences(AppConst.LOGIN_PREF_SORT,Context.MODE_PRIVATE);
+        SharedPreferences sort_prefrence_vod = context.getSharedPreferences(AppConst.LOGIN_PREF_SORT_VOD,Context.MODE_PRIVATE);
         String sort = sort_prefrence.getString(AppConst.LOGIN_PREF_SORT,"");
+        String sort_vod = sort_prefrence_vod.getString(AppConst.LOGIN_PREF_SORT,"");
 
         if (cateogryId.equals("0")) {
             ArrayList<LiveStreamsDBModel> liveStreamsList = new ArrayList<LiveStreamsDBModel>();
             // Select All Query
             String selectQuery;
 
+            if (type == "movie") {
+
+                if (sort_vod.equals("0")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'";
+                } else if (sort_vod.equals("1")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'" + " ORDER BY " + KEY_ADDED + " DESC";
+                } else if (sort_vod.equals("3")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'" + " ORDER BY " + KEY_NAME + " DESC";
+                } else {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'" + " ORDER BY " + KEY_NAME + " ASC";
+                }
 
 
-            if(sort.equals("0")){
-                selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'";
-            }
-            else if(sort.equals("1")){
-                selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'" + " ORDER BY " + KEY_ADDED + " DESC";
-            }
-            else if(sort.equals("3")){
-                selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'" + " ORDER BY " + KEY_NAME + " DESC";
-            }
-            else{
-                selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'" + " ORDER BY " + KEY_NAME + " ASC";
             }
 
+
+            else {
+
+                if (sort.equals("0")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'";
+                } else if (sort.equals("1")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'" + " ORDER BY " + KEY_ADDED + " DESC";
+                } else if (sort.equals("3")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'" + " ORDER BY " + KEY_NAME + " DESC";
+                } else {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'" + " ORDER BY " + KEY_NAME + " ASC";
+                }
+            }
             // selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'" + " ORDER BY " + KEY_ADDED + " DESC";
 
             //selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_STRESM_TYPE + "='" + type + "'";
@@ -823,7 +838,24 @@ public class LiveStreamDBHandler extends SQLiteOpenHelper {
 
             String selectQuery;
 
+            if (type == "movie") {
 
+                if(sort_vod.equals("0")){
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" ;
+                }
+                else if(sort_vod.equals("1")){
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_ADDED + " DESC";
+                }
+                else if(sort_vod.equals("3")){
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_NAME + " DESC";
+                }
+                else{
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_NAME + " ASC";
+                }
+
+            }
+
+            else{
 
             if(sort.equals("0")){
                 selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" ;
@@ -836,6 +868,7 @@ public class LiveStreamDBHandler extends SQLiteOpenHelper {
             }
             else{
                 selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_NAME + " ASC";
+            }
             }
 
 //                selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_ADDED + " DESC";
@@ -909,21 +942,36 @@ public class LiveStreamDBHandler extends SQLiteOpenHelper {
 
             String selectQuery;
 
+            if (type == "movie") {
 
-            if(sort.equals("0")){
-                selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" ;
+                if (sort_vod.equals("0")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'";
+
+                } else if (sort_vod.equals("1")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_ADDED + " DESC";
+
+                } else if (sort_vod.equals("3")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_NAME + " DESC";
+                } else {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_NAME + " ASC";
+
+                }
 
             }
-            else if(sort.equals("1")){
-                selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_ADDED + " DESC";
 
-            }
-            else if(sort.equals("3")){
-                selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_NAME + " DESC";
-            }
-            else{
-                selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_NAME + " ASC";
+            else {
+                if (sort.equals("0")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'";
 
+                } else if (sort.equals("1")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_ADDED + " DESC";
+
+                } else if (sort.equals("3")) {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_NAME + " DESC";
+                } else {
+                    selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_NAME + " ASC";
+
+                }
             }
 
 //                selectQuery = "SELECT  * FROM " + TABLE_IPTV_AVAILABLE_CHANNNELS + " WHERE " + KEY_CATEGORY_ID_LIVE_STREAMS + " ='" + cateogryId + "'" + " ORDER BY " + KEY_ADDED + " DESC";
@@ -1563,7 +1611,7 @@ public class LiveStreamDBHandler extends SQLiteOpenHelper {
 
 
     public ArrayList<LiveStreamsDBModel> getAllLiveStreamsArchive(String cateogryId) {  // String categoryId
-        SharedPreferences sort_prefrence = context.getSharedPreferences(AppConst.LOGIN_PREF_SORT,Context.MODE_PRIVATE);
+        SharedPreferences sort_prefrence = context.getSharedPreferences(AppConst.LOGIN_PREF_SORT_TV_ARCHIVE,Context.MODE_PRIVATE);
         String sort = sort_prefrence.getString(AppConst.LOGIN_PREF_SORT,"");
         if (cateogryId.equals("0")) {
             ArrayList<LiveStreamsDBModel> liveStreamsList = new ArrayList<LiveStreamsDBModel>();

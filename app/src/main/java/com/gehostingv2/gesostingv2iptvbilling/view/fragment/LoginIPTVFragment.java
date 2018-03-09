@@ -81,6 +81,8 @@ public class LoginIPTVFragment extends Fragment implements LoginIPTVInterface {
     private SharedPreferences.Editor loginPrefsEditor_timefomat;
     private SharedPreferences.Editor loginPrefsEditor_epgchannelupdate;
     private SharedPreferences.Editor loginPrefsEditor_fomat;
+    private SharedPreferences loginPrefXtream;
+    private SharedPreferences.Editor loginPrefXtreamEditor;
 
 
 
@@ -149,6 +151,7 @@ public class LoginIPTVFragment extends Fragment implements LoginIPTVInterface {
         loginPreferencesAfterLogin = context.getSharedPreferences(AppConst.LOGIN_SHARED_PREFERENCE_IPTV, MODE_PRIVATE);
         loginPrefsEditorBeforeLogin = loginPreferences.edit();
         saveLogin = loginPreferences.getBoolean(AppConst.PREF_SAVE_LOGIN_IPTV, false);
+        setXtream1_06(context);
         loginCheck();
     }
 
@@ -299,7 +302,12 @@ public class LoginIPTVFragment extends Fragment implements LoginIPTVInterface {
                             loginPrefsEditorBeforeLogin.putString(AppConst.PREF_LOGIN_WITH, AppConst.LOGIN_WITH_DETAILS);
                             loginPrefsEditorBeforeLogin.commit();
                         }
-                        loginPresenter.validateLogin(username, password);
+                        boolean isXtream = getIsXtream1_06(context);
+                        if(isXtream){
+                            loginPresenter.validateLoginUsingPanelAPI(username, password);
+                        }else{
+                            loginPresenter.validateLogin(username, password);
+                        }
                     }
                 }
                 break;
@@ -453,4 +461,24 @@ public class LoginIPTVFragment extends Fragment implements LoginIPTVInterface {
     }
 
 
+
+    private void setXtream1_06(Context context) {
+        if(context!=null) {
+            loginPrefXtream = context.getSharedPreferences(AppConst.LOGIN_SHARED_PREFERENCE_IS_XTREAM_1_06, MODE_PRIVATE);
+            loginPrefXtreamEditor = loginPrefXtream.edit();
+            loginPrefXtreamEditor.putBoolean(AppConst.IS_XTREAM_1_06, true);
+            loginPrefXtreamEditor.commit();
+        }
+
+    }
+
+    private boolean getIsXtream1_06(Context context) {
+        if(context!=null) {
+            boolean isXtreams = false;
+            loginPrefXtream = context.getSharedPreferences(AppConst.LOGIN_SHARED_PREFERENCE_IS_XTREAM_1_06, MODE_PRIVATE);
+            isXtreams = loginPrefXtream.getBoolean(AppConst.IS_XTREAM_1_06, false);
+            return isXtreams;
+        }
+        return false;
+    }
 }

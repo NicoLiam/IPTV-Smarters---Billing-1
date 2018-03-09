@@ -133,7 +133,7 @@ public class SubTVArchiveAdapter extends RecyclerView.Adapter<SubTVArchiveAdapte
             String getTime = new SimpleDateFormat(timeFormat, Locale.US).format(epgDateToTimestamp);
             String getTimeStop = new SimpleDateFormat(timeFormat, Locale.US).format(epgDateToTimestampStop);
 //            final String getStopTime = new SimpleDateFormat("HH-mm", Locale.US).format(epgDateToTimestampStop);
-            final String getStartFormatedTime = new SimpleDateFormat("yyyy-MM-dd:hh-mm", Locale.US).format(epgDateToTimestamp);
+            final String getStartFormatedTime = new SimpleDateFormat("yyyy-MM-dd:HH-mm", Locale.US).format(epgDateToTimestamp);
 
 //        final String getTime   = getStart.substring(11, 16);
             final String getTitle = dataSet.get(listPosition).getTitle();

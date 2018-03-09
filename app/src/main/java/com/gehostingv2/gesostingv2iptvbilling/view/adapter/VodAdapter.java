@@ -51,6 +51,7 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.MyViewHolder>  {
     SharedPreferences pref ;
     SharedPreferences.Editor editor;
     int LIVE_FLAG_VOD ;
+    private SharedPreferences loginPrefXtream;
 
     public void setVisibiltygone(ProgressBar pbPagingLoader) {
         if (pbPagingLoader != null)
@@ -209,41 +210,63 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.MyViewHolder>  {
             } else {
                 holder.ivFavourite.setVisibility(View.INVISIBLE);
             }
+
+            final int finalStreamId2 = streamId;
+            final int finalStreamId6 = streamId;
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    startViewDeatilsActivity(streamId,
-//                            movieName,
-//                            selectedPlayer,
-//                            streamType,
-//                            containerExtension,
-//                            categoryId);
-                    Utils.playWithPlayerVOD(context, selectedPlayer, streamId, streamType, containerExtension,num,name);
+
+                    boolean isXteam1_06 = getIsXtream1_06(context);
+                    if(isXteam1_06){
+                        final int finalStreamId2 = finalStreamId6;
+                        Utils.playWithPlayerVOD(context, selectedPlayer, streamId, streamType, containerExtension,num,name);
+                    }else {
+                        startViewDeatilsActivity(streamId,
+                                movieName,
+                                selectedPlayer,
+                                streamType,
+                                containerExtension,
+                                categoryId, num, name);
+                    }
                 }
             });
 
             holder.MovieImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startViewDeatilsActivity(streamId,
-                            movieName,
-                            selectedPlayer,
-                            streamType,
-                            containerExtension,
-                            categoryId,num,name);
-//                    Utils.playWithPlayerVOD(context, selectedPlayer, streamId, streamType, containerExtension);
+
+                    boolean isXteam1_06 = getIsXtream1_06(context);
+                    if(isXteam1_06){
+                        final int finalStreamId2 = finalStreamId6;
+                        Utils.playWithPlayerVOD(context, selectedPlayer, streamId, streamType, containerExtension,num,name);
+                    }else{
+                        startViewDeatilsActivity(streamId,
+                                movieName,
+                                selectedPlayer,
+                                streamType,
+                                containerExtension,
+                                categoryId,num,name);
+                    }
+
                 }
             });
 
             holder.Movie.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startViewDeatilsActivity(streamId,
-                            movieName,
-                            selectedPlayer,
-                            streamType,
-                            containerExtension,
-                            categoryId,num,name);
+                    boolean isXteam1_06 = getIsXtream1_06(context);
+                    if(isXteam1_06){
+                        final int finalStreamId2 = finalStreamId6;
+                        Utils.playWithPlayerVOD(context, selectedPlayer, streamId, streamType, containerExtension,num,name);
+                    }else {
+                        startViewDeatilsActivity(streamId,
+                                movieName,
+                                selectedPlayer,
+                                streamType,
+                                containerExtension,
+                                categoryId, num, name);
+                    }
                 }
             });
 
@@ -350,7 +373,14 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.MyViewHolder>  {
         //creating a popup menu
         PopupMenu popup = new PopupMenu(context, holder.tvStreamOptions);
         //inflating menu from xml resource
+        boolean isXteam1_06 = getIsXtream1_06(context);
         popup.inflate(R.menu.menu_card_vod);
+        if(isXteam1_06){
+            popup.getMenu().removeItem(R.id.menu_view_details);
+        }
+        else{
+
+        }
         ArrayList<FavouriteDBModel> checkFavourite = database.checkFavourite(streamId, categoryId, "vod");
         if (checkFavourite.size() > 0) {
             popup.getMenu().getItem(2).setVisible(true);
@@ -432,6 +462,16 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.MyViewHolder>  {
         popup.show();
 
 
+    }
+
+    private boolean getIsXtream1_06(Context context) {
+        if(context!=null) {
+            boolean isXtreams = false;
+            loginPrefXtream = context.getSharedPreferences(AppConst.LOGIN_SHARED_PREFERENCE_IS_XTREAM_1_06, MODE_PRIVATE);
+            isXtreams = loginPrefXtream.getBoolean(AppConst.IS_XTREAM_1_06, false);
+            return isXtreams;
+        }
+        return false;
     }
 
 

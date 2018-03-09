@@ -115,6 +115,13 @@ public interface RetrofitPost {
             @Field("password") String password);
 
     @FormUrlEncoded
+    @POST("/panel_api.php")
+    Call<ValidationIPTVCallback> validateLoginUsingPanelApi(
+            @Header("Content-Type") String contentType,
+            @Field("username") String username,
+            @Field("password") String password);
+
+    @FormUrlEncoded
     @POST("/player_api.php")
     Call<List<LiveStreamCategoriesCallback>> liveStreamCategories(
             @Header("Content-Type") String contentType,

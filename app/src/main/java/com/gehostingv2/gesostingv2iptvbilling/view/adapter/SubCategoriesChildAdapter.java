@@ -35,6 +35,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class SubCategoriesChildAdapter extends RecyclerView.Adapter<SubCategoriesChildAdapter.MyViewHolder> {
     private Context context;
     private List<LiveStreamsDBModel> dataSet;
@@ -45,6 +47,7 @@ public class SubCategoriesChildAdapter extends RecyclerView.Adapter<SubCategorie
     private SharedPreferences settingsPrefs;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    private SharedPreferences loginPrefXtream;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_movie_name)
@@ -152,25 +155,36 @@ public class SubCategoriesChildAdapter extends RecyclerView.Adapter<SubCategorie
             holder.MovieImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startViewDeatilsActivity(streamId,
-                            movieName,
-                            selectedPlayer,
-                            streamType,
-                            containerExtension,
-                            categoryId,num,name);
-//                    Utils.playWithPlayerVOD(context, selectedPlayer, streamId, streamType, containerExtension);
+                    boolean isXteam1_06 = getIsXtream1_06(context);
+                    if(isXteam1_06){
+                        final int finalStreamId2 = streamId;
+                        Utils.playWithPlayerVOD(context, selectedPlayer, finalStreamId2, streamType, containerExtension, num, movieName);
+                    }else {
+                        startViewDeatilsActivity(streamId,
+                                movieName,
+                                selectedPlayer,
+                                streamType,
+                                containerExtension,
+                                categoryId, num, name);
+                    }
                 }
             });
 
             holder.Movie.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startViewDeatilsActivity(streamId,
-                            movieName,
-                            selectedPlayer,
-                            streamType,
-                            containerExtension,
-                            categoryId,num,name);
+                    boolean isXteam1_06 = getIsXtream1_06(context);
+                    if (isXteam1_06) {
+                        final int finalStreamId2 = streamId;
+                        Utils.playWithPlayerVOD(context, selectedPlayer, finalStreamId2, streamType, containerExtension, num, movieName);
+                    } else {
+                        startViewDeatilsActivity(streamId,
+                                movieName,
+                                selectedPlayer,
+                                streamType,
+                                containerExtension,
+                                categoryId, num, name);
+                    }
                 }
             });
 
@@ -264,6 +278,15 @@ public class SubCategoriesChildAdapter extends RecyclerView.Adapter<SubCategorie
             context.startActivity(viewDetailsActivityIntent);
         }
     }
+    private boolean getIsXtream1_06(Context context) {
+        if (context != null) {
+            boolean isXtreams = false;
+            loginPrefXtream = context.getSharedPreferences(AppConst.LOGIN_SHARED_PREFERENCE_IS_XTREAM_1_06, MODE_PRIVATE);
+            isXtreams = loginPrefXtream.getBoolean(AppConst.IS_XTREAM_1_06, false);
+            return isXtreams;
+        }
+        return false;
+    }
 
     private void popmenu(final MyViewHolder holder,
                          final int streamId,
@@ -278,6 +301,12 @@ public class SubCategoriesChildAdapter extends RecyclerView.Adapter<SubCategorie
         PopupMenu popup = new PopupMenu(context, holder.tvStreamOptions);
         //inflating menu from xml resource
         popup.inflate(R.menu.menu_card_vod);
+        boolean isXteam1_06 = getIsXtream1_06(context);
+        if (isXteam1_06) {
+            popup.getMenu().removeItem(R.id.menu_view_details);
+        } else {
+
+        }
         ArrayList<FavouriteDBModel> checkFavourite = database.checkFavourite(streamId, categoryId, "vod");
         if (checkFavourite.size() > 0) {
             popup.getMenu().getItem(2).setVisible(true);
