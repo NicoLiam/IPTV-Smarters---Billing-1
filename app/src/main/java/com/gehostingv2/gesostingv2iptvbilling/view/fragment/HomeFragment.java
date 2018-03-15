@@ -196,7 +196,6 @@ public class HomeFragment extends Fragment implements HomeInterface,
     TextView tvVodCount;
 
 
-
     @BindView(R.id.pb_loader_service)
     AVLoadingIndicatorView serviceCountLoader;
     @BindView(R.id.pb_loader_domain)
@@ -224,9 +223,9 @@ public class HomeFragment extends Fragment implements HomeInterface,
             new DatabaseUpdatedStatusDBModel();
     DatabaseUpdatedStatusDBModel databaseUpdatedStatusDBModelEPG =
             new DatabaseUpdatedStatusDBModel();
-    String currentDate ="";
-    String userName="";
-    String userPassword ="";
+    String currentDate = "";
+    String userName = "";
+    String userPassword = "";
 
 
     LinearLayoutManager layoutManager;
@@ -344,21 +343,22 @@ public class HomeFragment extends Fragment implements HomeInterface,
             updateDashboardData();
         }
     }
+
     private void updateTotalCount(Context context) {
         if (context != null) {
             liveStreamDBHandler = new LiveStreamDBHandler(context);
-            if (liveStreamDBHandler.getStreamsCount("live") > 0 && tvLiveCount!=null){
-                tvLiveCount.append(" : "+liveStreamDBHandler.getStreamsCount("live"));
+            if (liveStreamDBHandler.getStreamsCount("live") > 0 && tvLiveCount != null) {
+                tvLiveCount.append(" : " + liveStreamDBHandler.getStreamsCount("live"));
                 tvLiveCount.setVisibility(View.VISIBLE);
             }
 
-            if (liveStreamDBHandler.getStreamsCount("movie") > 0 && tvVodCount!=null){
-                tvVodCount.append(" : "+liveStreamDBHandler.getStreamsCount("movie"));
+            if (liveStreamDBHandler.getStreamsCount("movie") > 0 && tvVodCount != null) {
+                tvVodCount.append(" : " + liveStreamDBHandler.getStreamsCount("movie"));
                 tvVodCount.setVisibility(View.VISIBLE);
             }
 
-            if (liveStreamDBHandler.getEPGCount() > 0 && tvEPGCount!=null){
-                tvEPGCount.append(" : "+liveStreamDBHandler.getEPGCount());
+            if (liveStreamDBHandler.getEPGCount() > 0 && tvEPGCount != null) {
+                tvEPGCount.append(" : " + liveStreamDBHandler.getEPGCount());
                 tvEPGCount.setVisibility(View.VISIBLE);
             }
         }
@@ -368,9 +368,9 @@ public class HomeFragment extends Fragment implements HomeInterface,
     private void launchTVGuideFromDifferentActivity() {
         Intent intentOtherActiviy = getActivity().getIntent();
         String launchTvGuid = "";
-        if(intentOtherActiviy!=null) {
+        if (intentOtherActiviy != null) {
             launchTvGuid = intentOtherActiviy.getStringExtra(AppConst.LAUNCH_TV_GUIDE);
-            if(launchTvGuid != null && !launchTvGuid.equals("") &&
+            if (launchTvGuid != null && !launchTvGuid.equals("") &&
                     launchTvGuid.equals(AppConst.LAUNCH_TV_GUIDE)) {
                 launchTvGuide();
             }
@@ -380,10 +380,10 @@ public class HomeFragment extends Fragment implements HomeInterface,
 
     private void launchTvGuide() {
         currentDate = currentDateValue();
-        startXMLTV(getUserName(),getUserPassword(), currentDate);
+        startXMLTV(getUserName(), getUserPassword(), currentDate);
     }
 
-    public void startXMLTV(String userName, String userPassword, String currentDate){
+    public void startXMLTV(String userName, String userPassword, String currentDate) {
         String status = "";
         String lastUpdatedStatusdate = "";
         int epgCount = liveStreamDBHandler.getEPGCount();
@@ -396,12 +396,10 @@ public class HomeFragment extends Fragment implements HomeInterface,
         long dateDifference = getDateDiff(simpleDateFormat, lastUpdatedStatusdate, currentDate);
         if (epgCount == 0) {
             startImportTvGuideActivity();
-        }
-        else if(dateDifference>=0 && dateDifference < 2){
+        } else if (dateDifference >= 0 && dateDifference < 2) {
             startTvGuideActivity();
-        }
-        else if (dateDifference >= 2) {
-            executeXMLTV(userName, userPassword,status, currentDate);
+        } else if (dateDifference >= 2) {
+            executeXMLTV(userName, userPassword, status, currentDate);
         }
     }
 
@@ -428,14 +426,15 @@ public class HomeFragment extends Fragment implements HomeInterface,
     }
 
     public void startTvGuideActivity() {
-        if(context !=null) {
+        if (context != null) {
             Intent epgIntent = new Intent(context, LiveStreamEpgAcitivity.class);
             startActivity(epgIntent);
             getActivity().finish();
         }
     }
+
     public void startImportTvGuideActivity() {
-        if(context !=null) {
+        if (context != null) {
             Intent epgIntent = new Intent(context, ImportEPGActivity.class);
             startActivity(epgIntent);
             getActivity().finish();
@@ -461,45 +460,51 @@ public class HomeFragment extends Fragment implements HomeInterface,
     }
 
     public void updateChannelsandEPG(Context context) {
-        currentDate = currentDateValue();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        if (context != null && liveStreamDBHandler != null && rlImportProcess != null) {
-            rlImportProcess.setVisibility(View.GONE);
-            loginPreferencesAfterLogin = context.getSharedPreferences(AppConst.LOGIN_SHARED_PREFERENCE_IPTV, MODE_PRIVATE);
-            String username = loginPreferencesAfterLogin.getString(AppConst.LOGIN_PREF_USERNAME_IPTV, "");
-            String password = loginPreferencesAfterLogin.getString(AppConst.LOGIN_PREF_PASSWORD_IPTV, "");
-            int count = liveStreamDBHandler.getDBStatusCount();
-            if (count == 0) {
-            } else {
-                if (liveStreamDBHandler != null &&
-                        rlImportProcess != null &&
-                        xtreamPanelAPIPresenter != null &&
-                        xmlTvPresenter != null) {
-                    String lastUpdatedStatusdate = "";
-                    String status = "";
-                    databaseUpdatedStatusDBModelLive = liveStreamDBHandler.getdateDBStatus(AppConst.DB_CHANNELS, AppConst.DB_CHANNELS_ID);
-                    if (databaseUpdatedStatusDBModelLive != null) {
-                        status = databaseUpdatedStatusDBModelLive.getDbUpadatedStatusState();
-                        lastUpdatedStatusdate = databaseUpdatedStatusDBModelLive.getDbLastUpdatedDate();
-                    }
-                    long diffChannelsDate = getDateDiff(simpleDateFormat, lastUpdatedStatusdate, currentDate);
-                    if (diffChannelsDate >= 1) {
-                        rlImportProcess.setVisibility(View.VISIBLE);
-                        if (!username.equals("") &&
-                                !password.equals("") &&
-                                !status.equals("") &&
-                                !status.isEmpty() &&
-                                status.equals(AppConst.DB_UPDATED_STATUS_FINISH) ||
+        loginPreferencesAfterLogin = context.getSharedPreferences(AppConst.LOGIN_PREF_AUTOUPDATE, MODE_PRIVATE);
+        String autoUpdate = loginPreferencesAfterLogin.getString(AppConst.LOGIN_PREF_AUTOUPDATE, "");
+        if (autoUpdate.equals(getResources().getString(R.string.disable))) {
 
-                                !username.equals("") &&
-                                        !password.equals("") &&
-                                        status != null &&
-                                        !status.equals("") &&
-                                        !status.isEmpty() &&
-                                        status.equals(AppConst.DB_UPDATED_STATUS_FAILED)) {
-                            liveStreamDBHandler.updateDBStatusAndDate(AppConst.DB_CHANNELS,
-                                    AppConst.DB_CHANNELS_ID, AppConst.DB_UPDATED_STATUS_PROCESSING, currentDate);
-                            xtreamPanelAPIPresenter.panelAPI(username, password);
+        } else {
+            currentDate = currentDateValue();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            if (context != null && liveStreamDBHandler != null && rlImportProcess != null) {
+                rlImportProcess.setVisibility(View.GONE);
+                loginPreferencesAfterLogin = context.getSharedPreferences(AppConst.LOGIN_SHARED_PREFERENCE_IPTV, MODE_PRIVATE);
+                String username = loginPreferencesAfterLogin.getString(AppConst.LOGIN_PREF_USERNAME_IPTV, "");
+                String password = loginPreferencesAfterLogin.getString(AppConst.LOGIN_PREF_PASSWORD_IPTV, "");
+                int count = liveStreamDBHandler.getDBStatusCount();
+                if (count == 0) {
+                } else {
+                    if (liveStreamDBHandler != null &&
+                            rlImportProcess != null &&
+                            xtreamPanelAPIPresenter != null &&
+                            xmlTvPresenter != null) {
+                        String lastUpdatedStatusdate = "";
+                        String status = "";
+                        databaseUpdatedStatusDBModelLive = liveStreamDBHandler.getdateDBStatus(AppConst.DB_CHANNELS, AppConst.DB_CHANNELS_ID);
+                        if (databaseUpdatedStatusDBModelLive != null) {
+                            status = databaseUpdatedStatusDBModelLive.getDbUpadatedStatusState();
+                            lastUpdatedStatusdate = databaseUpdatedStatusDBModelLive.getDbLastUpdatedDate();
+                        }
+                        long diffChannelsDate = getDateDiff(simpleDateFormat, lastUpdatedStatusdate, currentDate);
+                        if (diffChannelsDate >= 1) {
+                            rlImportProcess.setVisibility(View.VISIBLE);
+                            if (!username.equals("") &&
+                                    !password.equals("") &&
+                                    !status.equals("") &&
+                                    !status.isEmpty() &&
+                                    status.equals(AppConst.DB_UPDATED_STATUS_FINISH) ||
+
+                                    !username.equals("") &&
+                                            !password.equals("") &&
+                                            status != null &&
+                                            !status.equals("") &&
+                                            !status.isEmpty() &&
+                                            status.equals(AppConst.DB_UPDATED_STATUS_FAILED)) {
+                                liveStreamDBHandler.updateDBStatusAndDate(AppConst.DB_CHANNELS,
+                                        AppConst.DB_CHANNELS_ID, AppConst.DB_UPDATED_STATUS_PROCESSING, currentDate);
+                                xtreamPanelAPIPresenter.panelAPI(username, password);
+                            }
                         }
                     }
                 }
@@ -742,7 +747,7 @@ public class HomeFragment extends Fragment implements HomeInterface,
                 startActivity(detail_tv_archive);
                 break;
             case R.id.detail_view_epg:
-                if(context !=null) {
+                if (context != null) {
                     launchTvGuide();
                 }
                 break;
@@ -774,15 +779,15 @@ public class HomeFragment extends Fragment implements HomeInterface,
             if (liveList != null) {
                 totalLive = liveList.size();
             }
-            if (liveStreamDBHandler!=null && liveStreamDBHandler.getStreamsCount("live") > 0 && tvLiveCount!=null){
+            if (liveStreamDBHandler != null && liveStreamDBHandler.getStreamsCount("live") > 0 && tvLiveCount != null) {
                 tvLiveCount.setText(getResources().getString(R.string.total));
-                tvLiveCount.append(" : "+liveStreamDBHandler.getStreamsCount("live"));
+                tvLiveCount.append(" : " + liveStreamDBHandler.getStreamsCount("live"));
                 tvLiveCount.setVisibility(View.VISIBLE);
             }
 
-            if (liveStreamDBHandler!=null && liveStreamDBHandler.getStreamsCount("movie") > 0 && tvVodCount!=null){
+            if (liveStreamDBHandler != null && liveStreamDBHandler.getStreamsCount("movie") > 0 && tvVodCount != null) {
                 tvVodCount.setText(getResources().getString(R.string.total));
-                tvVodCount.append(" : "+liveStreamDBHandler.getStreamsCount("movie"));
+                tvVodCount.append(" : " + liveStreamDBHandler.getStreamsCount("movie"));
                 tvVodCount.setVisibility(View.VISIBLE);
             }
 
@@ -813,21 +818,21 @@ public class HomeFragment extends Fragment implements HomeInterface,
                     publishProgress(0);
                     int i = 0;
 
-                    try{
+                    try {
                         if (liveStreamDBHandler != null) {
                             liveStreamDBHandler.makeEmptyChanelsRecord();
                         }
 
-                    }catch(IllegalStateException e){
+                    } catch (IllegalStateException e) {
                         Log.e("Exception", "IllegalState Exception:", e);
                     }
 
-                    try{
+                    try {
                         if (liveStreamDBHandler != null) {
                             liveStreamDBHandler.addAllAvailableChannel(availableChanelsList);
                         }
 
-                    }catch(IllegalStateException e){
+                    } catch (IllegalStateException e) {
                         Log.e("Exception", "IllegalState Exception:", e);
                     }
 
@@ -870,12 +875,12 @@ public class HomeFragment extends Fragment implements HomeInterface,
                     if (currentDate != null && liveStreamDBHandler != null) {
 
 
-                        try{
+                        try {
                             liveStreamDBHandler.updateDBStatus(AppConst.DB_CHANNELS,
                                     AppConst.DB_CHANNELS_ID,
                                     AppConst.DB_UPDATED_STATUS_FINISH);
 
-                        }catch(IllegalStateException e){
+                        } catch (IllegalStateException e) {
                             Log.e("Exception", "IllegalState Exception:", e);
                         }
 
@@ -885,7 +890,8 @@ public class HomeFragment extends Fragment implements HomeInterface,
                     }
 
 
-                    Utils.showToast(context, getResources().getString(R.string.update_livestreams_vod_success));
+                    if (context != null)
+                        Utils.showToast(context, getResources().getString(R.string.update_livestreams_vod_success));
 //                    if (context != null) {
 //                        Intent importEPGIntent = new Intent(context, ImportEPGActivity.class);
 //                        startActivity(importEPGIntent);
@@ -911,20 +917,19 @@ public class HomeFragment extends Fragment implements HomeInterface,
                 protected Boolean doInBackground(String... params) {
                     publishProgress(0);
 
-                    try{
+                    try {
                         liveStreamDBHandler.makeEmptyLiveCategory();
-                    }catch(IllegalStateException e){
+                    } catch (IllegalStateException e) {
                         Log.e("Exception", "IllegalState Exception:", e);
                     }
 
-                    try{
+                    try {
                         if (liveStreamDBHandler != null) {
                             liveStreamDBHandler.addLiveCategories(liveList);
                         }
-                    }catch(IllegalStateException e){
+                    } catch (IllegalStateException e) {
                         Log.e("Exception", "IllegalState Exception:", e);
                     }
-
 
 
                     return true;
@@ -993,18 +998,18 @@ public class HomeFragment extends Fragment implements HomeInterface,
                 protected Boolean doInBackground(String... params) {
                     publishProgress(0);
 
-                    try{
+                    try {
                         liveStreamDBHandler.makeEmptyMovieCategory();
 
-                    }catch(IllegalStateException e){
+                    } catch (IllegalStateException e) {
                         Log.e("Exception", "IllegalState Exception:", e);
                     }
 
-                    try{
+                    try {
                         if (liveStreamDBHandler != null) {
                             liveStreamDBHandler.addMovieCategories(movieList);
                         }
-                    }catch(IllegalStateException e){
+                    } catch (IllegalStateException e) {
                         Log.e("Exception", "IllegalState Exception:", e);
                     }
 
@@ -1096,9 +1101,9 @@ public class HomeFragment extends Fragment implements HomeInterface,
 
             final int totalEPGSize = xmltvCallback.programmePojos.size();
 
-            if (totalEPGSize > 0 && tvEPGCount!=null){
+            if (totalEPGSize > 0 && tvEPGCount != null) {
                 tvEPGCount.setText(getResources().getString(R.string.total));
-                tvEPGCount.append(" : "+totalEPGSize);
+                tvEPGCount.append(" : " + totalEPGSize);
                 tvEPGCount.setVisibility(View.VISIBLE);
             }
             liveStreamDBHandler.makeEmptyEPG();
@@ -1116,14 +1121,13 @@ public class HomeFragment extends Fragment implements HomeInterface,
                 protected Boolean doInBackground(String... params) {
                     publishProgress(0);
 
-                    try{
+                    try {
                         if (liveStreamDBHandler != null) {
                             liveStreamDBHandler.addEPG(xmltvCallback.programmePojos);
                         }
-                    }catch(IllegalStateException e){
+                    } catch (IllegalStateException e) {
                         Log.e("Exception", "IllegalState Exception:", e);
                     }
-
 
 
                     return true;
@@ -1166,7 +1170,7 @@ public class HomeFragment extends Fragment implements HomeInterface,
 //                    liveStreamDBHandler.getdateDBStatus(AppConst.DB_EPG, AppConst.DB_EPG_ID);
 
                     if (context != null) {
-                        Utils.showToast(context, getResources().getString(R.string.update_tv_guide_success) +" ("+totalEPGSize+")");
+                        Utils.showToast(context, getResources().getString(R.string.update_tv_guide_success) + " (" + totalEPGSize + ")");
                     }
                 }
             }
@@ -1293,32 +1297,32 @@ public class HomeFragment extends Fragment implements HomeInterface,
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-           case R.id.menu_load_channels_vod:
-               AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-               // Setting Dialog Title
-               alertDialog.setTitle(context.getResources().getString(R.string.confirm_refresh));
-               // Setting Dialog Message
-               alertDialog.setMessage(context.getResources().getString(R.string.proceed));
-               // Setting Icon to Dialog
-               alertDialog.setIcon(R.drawable.questionmark);
-               // Setting Positive "Yes" Button
-               alertDialog.setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog,int which) {
+            case R.id.menu_load_channels_vod:
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                // Setting Dialog Title
+                alertDialog.setTitle(context.getResources().getString(R.string.confirm_refresh));
+                // Setting Dialog Message
+                alertDialog.setMessage(context.getResources().getString(R.string.proceed));
+                // Setting Icon to Dialog
+                alertDialog.setIcon(R.drawable.questionmark);
+                // Setting Positive "Yes" Button
+                alertDialog.setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
 
-                       // Write your code here to invoke YES event
-                       loadChannelsAndVod();
-                   }
-               });
+                        // Write your code here to invoke YES event
+                        loadChannelsAndVod();
+                    }
+                });
 
-               // Setting Negative "NO" Button
-               alertDialog.setNegativeButton(context.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int which) {
-                       // Write your code here to invoke NO event
-                       dialog.cancel();
-                   }
-               });
-               // Showing Alert Message
-               alertDialog.show();
+                // Setting Negative "NO" Button
+                alertDialog.setNegativeButton(context.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to invoke NO event
+                        dialog.cancel();
+                    }
+                });
+                // Showing Alert Message
+                alertDialog.show();
                 break;
             case R.id.menu_load_tv_guide:
                 //            Utils.showAlertBox(context, "");
@@ -1331,7 +1335,7 @@ public class HomeFragment extends Fragment implements HomeInterface,
                 alertDialog1.setIcon(R.drawable.questionmark);
                 // Setting Positive "Yes" Button
                 alertDialog1.setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
+                    public void onClick(DialogInterface dialog, int which) {
 
                         // Write your code here to invoke YES event
                         loadTvGuid();
@@ -1418,12 +1422,11 @@ public class HomeFragment extends Fragment implements HomeInterface,
             databaseUpdatedStatusDBModelEPG =
                     liveStreamDBHandler.getdateDBStatus(AppConst.DB_EPG, AppConst.DB_EPG_ID);
             if (databaseUpdatedStatusDBModelEPG != null) {
-                if(databaseUpdatedStatusDBModelEPG.getDbUpadatedStatusState() == null ||
+                if (databaseUpdatedStatusDBModelEPG.getDbUpadatedStatusState() == null ||
                         databaseUpdatedStatusDBModelEPG.getDbUpadatedStatusState().equals(AppConst.DB_UPDATED_STATUS_FINISH)
                         || databaseUpdatedStatusDBModelEPG.getDbUpadatedStatusState().equals(AppConst.DB_UPDATED_STATUS_FAILED)) {
                     return true;
-                }
-                else {
+                } else {
                     return (databaseUpdatedStatusDBModelEPG.getDbUpadatedStatusState() == null ||
                             databaseUpdatedStatusDBModelEPG.getDbUpadatedStatusState().equals(""));
                 }

@@ -858,7 +858,9 @@ public class SettingssActivity extends AppCompatActivity implements ClientDetail
             R.id.btn_back_settings,
             R.id.rl_time_format,
             R.id.rl_epg_channel_update,
-            R.id.rl_live_vod_layout})
+            R.id.rl_live_vod_layout,
+            R.id.rl_live_vod_daily_update
+    })
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl_player:
@@ -915,6 +917,11 @@ public class SettingssActivity extends AppCompatActivity implements ClientDetail
             case R.id.rl_live_vod_layout:
                 Intent intentelivevodlayout = new Intent(this, LiveVodLayoutActivity.class);
                 startActivity(intentelivevodlayout);
+                break;
+            case R.id.rl_live_vod_daily_update:
+                Intent intentAutoUpdate = new Intent(this, AutoUpdateChannelsandVODActivity.class);
+                startActivity(intentAutoUpdate);
+
                 break;
         }
     }

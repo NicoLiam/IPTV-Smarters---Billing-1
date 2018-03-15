@@ -84,6 +84,11 @@ public class LoginIPTVFragment extends Fragment implements LoginIPTVInterface {
     private SharedPreferences loginPrefXtream;
     private SharedPreferences.Editor loginPrefXtreamEditor;
 
+    private SharedPreferences loginPreferencesSharedPref_epg_channel_auto_update;
+    private SharedPreferences.Editor loginPrefsEditor_epgchannelautoupdate;
+
+
+
 
 
     // TODO: Rename and change types of parameters
@@ -384,11 +389,13 @@ public class LoginIPTVFragment extends Fragment implements LoginIPTVInterface {
                     loginPreferencesSharedPref_allowed_format = context.getSharedPreferences(AppConst.LOGIN_PREF_ALLOWED_FORMAT, MODE_PRIVATE);
                     loginPreferencesSharedPref_time_format = context.getSharedPreferences(AppConst.LOGIN_PREF_TIME_FORMAT, MODE_PRIVATE);
                     loginPreferencesSharedPref_epg_channel_update = context.getSharedPreferences(AppConst.LOGIN_PREF_EPG_CHANNEL_UPDATE, MODE_PRIVATE);
+                    loginPreferencesSharedPref_epg_channel_auto_update = context.getSharedPreferences(AppConst.LOGIN_PREF_AUTOUPDATE, MODE_PRIVATE);
 
 
                     loginPrefsEditor_fomat = loginPreferencesSharedPref_allowed_format.edit();
                     loginPrefsEditor_timefomat = loginPreferencesSharedPref_time_format.edit();
                     loginPrefsEditor_epgchannelupdate = loginPreferencesSharedPref_epg_channel_update.edit();
+                    loginPrefsEditor_epgchannelautoupdate = loginPreferencesSharedPref_epg_channel_auto_update.edit();
 
 
                     String allowedFormat1 = loginPreferencesSharedPref_allowed_format.getString(AppConst.LOGIN_PREF_ALLOWED_FORMAT, "");
@@ -408,6 +415,11 @@ public class LoginIPTVFragment extends Fragment implements LoginIPTVInterface {
                         loginPrefsEditor_epgchannelupdate.commit();
                     }
 
+                    String channelVodAutoupdate = loginPreferencesSharedPref_epg_channel_auto_update.getString(AppConst.LOGIN_PREF_AUTOUPDATE, "");
+                    if (channelVodAutoupdate != null && channelVodAutoupdate.equals("")) {
+                        loginPrefsEditor_epgchannelautoupdate.putString(AppConst.LOGIN_PREF_AUTOUPDATE, getResources().getString(R.string.disable));
+                        loginPrefsEditor_epgchannelautoupdate.commit();
+                    }
 
 
 

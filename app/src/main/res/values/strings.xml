@@ -466,4 +466,7 @@
 
     <string name="live_categories">LIVE CATEGORIES</string>
     <string name="vod_categories">VOD CATEGORIES</string>
+    <string name="disable">Disable</string>
+    <string name="enable">Enable</string>
+    <string name="daily_update"><![CDATA[Auto-Update Channels & VOD daily]]></string>
 </resources>

@@ -357,6 +357,9 @@ Si vous ne trouvez pas de solution à vos problèmes dans notre base de connaiss
     <string name="not_support">joueur ne supporte pas cet appareil</string>
     <string name="live_categories">CATÉGORIES LIVE</string>
     <string name="vod_categories">CATÉGORIES VOD</string>
+    <string name="disable">Disable</string>
+    <string name="enable">Enable</string>
+    <string name="daily_update"><![CDATA[Auto-Update Channels & VOD daily]]></string>
 
 </resources>
 

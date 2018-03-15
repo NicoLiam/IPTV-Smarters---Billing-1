@@ -218,7 +218,8 @@
         <activity android:name=".view.activity.LiveTVListViewActivity" />
         <activity android:name=".view.activity.LiveTVListViewCatActivity" />
         <activity android:name=".view.activity.VodListViewActivity" />
-        <activity android:name=".view.activity.VoDListViewSubCatActivity"></activity>
+        <activity android:name=".view.activity.VoDListViewSubCatActivity" />
+        <activity android:name=".view.activity.AutoUpdateChannelsandVODActivity"></activity>
     </application>
 
 </manifest>

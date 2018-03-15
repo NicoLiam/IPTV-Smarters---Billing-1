@@ -375,5 +375,8 @@
     <string name="not_support">o jogador não suporta este dispositivo</string>
     <string name="live_categories">VIVER CATEGORIAS</string>
     <string name="vod_categories">CATEGORIAS DE VOD</string>
+    <string name="disable">Disable</string>
+    <string name="enable">Enable</string>
+    <string name="daily_update"><![CDATA[Auto-Update Channels & VOD daily]]></string>
 
 </resources>

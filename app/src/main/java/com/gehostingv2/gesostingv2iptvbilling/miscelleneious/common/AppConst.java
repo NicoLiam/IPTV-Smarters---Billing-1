@@ -4,23 +4,23 @@ public class AppConst {
 
     public static final String PACKAGE_NMAE = "com.gehostingv2.gesostingv2iptvbilling";
 
-//    public static final String BASE_URL_WHMCS = "http://dev2.whmcsmodules.in";
-//    public static final String SUB_FOLDERS = ""; // /billing
-//    public static final String CART_PAGE_URL = "cart.php?";
-//    public static final String INVOICE_PAGE_URL = "viewinvoice.php";
-//    public static final String API_USERNAME = "oiur4sfYCUni8xT";
-//    public static final String API_PASSWORD = "wYmTTfC6PfsjNOA";
-//    public static final String FULL_CART_PAGE_URL = "https://dev2.whmcsmodules.in/cart.php";
+    public static final String BASE_URL_WHMCS = "http://dev2.whmcsmodules.in";
+    public static final String SUB_FOLDERS = ""; // /billing
+    public static final String CART_PAGE_URL = "cart.php?";
+    public static final String INVOICE_PAGE_URL = "viewinvoice.php";
+    public static final String API_USERNAME = "oiur4sfYCUni8xT";
+    public static final String API_PASSWORD = "wYmTTfC6PfsjNOA";
+    public static final String FULL_CART_PAGE_URL = "https://dev2.whmcsmodules.in/cart.php";
 
 
     //testing details
-    public static final String BASE_URL_WHMCS = "http://ventura.whmcssmarters.com";
-    public static final String SUB_FOLDERS = "/billing";
-    public static final String CART_PAGE_URL = "billing/cart.php?";
-    public static final String INVOICE_PAGE_URL = "viewinvoice.php";
-    public static final String API_USERNAME = "8VFM5uPJfjf2Rgb";
-    public static final String API_PASSWORD = "hU1OVm1zuU9qgz2";
-    public static final String FULL_CART_PAGE_URL = "http://ventura.whmcssmarters.com/billing/cart.php";
+//    public static final String BASE_URL_WHMCS = "http://ventura.whmcssmarters.com";
+//    public static final String SUB_FOLDERS = "/billing";
+//    public static final String CART_PAGE_URL = "billing/cart.php?";
+//    public static final String INVOICE_PAGE_URL = "viewinvoice.php";
+//    public static final String API_USERNAME = "8VFM5uPJfjf2Rgb";
+//    public static final String API_PASSWORD = "hU1OVm1zuU9qgz2";
+//    public static final String FULL_CART_PAGE_URL = "http://ventura.whmcssmarters.com/billing/cart.php";
 
 
 //    public static final String FIREBASE_NOTIFICATION_WEB_API_KEY = "AAAAV7cGh24:APA91bEzW0MYH7k7PfNdq8Ngkv5sxGaH1RvGh9QNuXifsLR_Od3bDRduapPcYlB09f_Rtjv9bO7f_HxZeAfgisrV1E9u10kMWwBneWPNAnH708FJyplxrTDtrMKsnutBAcvHUx15Qfic";
@@ -198,6 +198,7 @@ public class AppConst {
     public static final String IS_XTREAM_1_06 = "isxtream1_06";
 
 
+    public static final String LOGIN_PREF_AUTOUPDATE = "autoupdatechannelsandvod";
 
     public class
     Config {
